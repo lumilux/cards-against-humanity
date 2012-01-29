@@ -13,6 +13,8 @@
 		E2626D4F14D4C75C007AFA63 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = E2626D4D14D4C75C007AFA63 /* InfoPlist.strings */; };
 		E2626D5114D4C75D007AFA63 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = E2626D5014D4C75D007AFA63 /* main.m */; };
 		E2626D5514D4C75D007AFA63 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E2626D5414D4C75D007AFA63 /* AppDelegate.m */; };
+		E2626D5E14D4C7B2007AFA63 /* RoomViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2626D5C14D4C7B2007AFA63 /* RoomViewController.m */; };
+		E2626D5F14D4C7B2007AFA63 /* RoomViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2626D5D14D4C7B2007AFA63 /* RoomViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -20,12 +22,15 @@
 		E2626D4414D4C75C007AFA63 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		E2626D4614D4C75C007AFA63 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		E2626D4814D4C75C007AFA63 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
-		E2626D4C14D4C75C007AFA63 /* CardsAgainstHumanity-Info.plist */ = {isa = PBXFileReference; path = "CardsAgainstHumanity-Info.plist"; sourceTree = "<group>"; };
+		E2626D4C14D4C75C007AFA63 /* CardsAgainstHumanity-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "CardsAgainstHumanity-Info.plist"; sourceTree = "<group>"; };
 		E2626D4E14D4C75C007AFA63 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		E2626D5014D4C75D007AFA63 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		E2626D5214D4C75D007AFA63 /* CardsAgainstHumanity-Prefix.pch */ = {isa = PBXFileReference; path = "CardsAgainstHumanity-Prefix.pch"; sourceTree = "<group>"; };
-		E2626D5314D4C75D007AFA63 /* AppDelegate.h */ = {isa = PBXFileReference; path = AppDelegate.h; sourceTree = "<group>"; };
+		E2626D5214D4C75D007AFA63 /* CardsAgainstHumanity-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CardsAgainstHumanity-Prefix.pch"; sourceTree = "<group>"; };
+		E2626D5314D4C75D007AFA63 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		E2626D5414D4C75D007AFA63 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		E2626D5B14D4C7B2007AFA63 /* RoomViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoomViewController.h; sourceTree = "<group>"; };
+		E2626D5C14D4C7B2007AFA63 /* RoomViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoomViewController.m; sourceTree = "<group>"; };
+		E2626D5D14D4C7B2007AFA63 /* RoomViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RoomViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +80,9 @@
 				E2626D5314D4C75D007AFA63 /* AppDelegate.h */,
 				E2626D5414D4C75D007AFA63 /* AppDelegate.m */,
 				E2626D4B14D4C75C007AFA63 /* Supporting Files */,
+				E2626D5B14D4C7B2007AFA63 /* RoomViewController.h */,
+				E2626D5C14D4C7B2007AFA63 /* RoomViewController.m */,
+				E2626D5D14D4C7B2007AFA63 /* RoomViewController.xib */,
 			);
 			path = CardsAgainstHumanity;
 			sourceTree = "<group>";
@@ -141,6 +149,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E2626D4F14D4C75C007AFA63 /* InfoPlist.strings in Resources */,
+				E2626D5F14D4C7B2007AFA63 /* RoomViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -153,6 +162,7 @@
 			files = (
 				E2626D5114D4C75D007AFA63 /* main.m in Sources */,
 				E2626D5514D4C75D007AFA63 /* AppDelegate.m in Sources */,
+				E2626D5E14D4C7B2007AFA63 /* RoomViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

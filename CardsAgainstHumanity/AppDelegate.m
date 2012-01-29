@@ -7,18 +7,41 @@
 //
 
 #import "AppDelegate.h"
+#import "RoomViewController.h"
 
 @implementation AppDelegate
 
+@synthesize navigationController;// = _navigationController;
 @synthesize window = _window;
 
-- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
+- (BOOL)application:(UIApplication *)application
+didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
-    self.window.backgroundColor = [UIColor whiteColor];
+    UIViewController *rootController = 
+    [[RoomViewController alloc] 
+     initWithNibName:@"RoomViewController" bundle:nil];
+    
+    navigationController = [[UINavigationController alloc]
+                            initWithRootViewController:rootController];
+    
+    self.window = [[UIWindow alloc] 
+                   initWithFrame:[[UIScreen mainScreen] bounds]];
+    [self.window addSubview:navigationController.view];
     [self.window makeKeyAndVisible];
     return YES;
+
+    /*
+     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+     // Override point for customization after application launch.
+     self.window.backgroundColor = [UIColor whiteColor];
+     [self.window makeKeyAndVisible];
+     return YES;
+     
+     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+     [self.window makeKeyAndVisible];
+     return YES;
+     */
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application
