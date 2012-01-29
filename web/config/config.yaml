@@ -6,4 +6,4 @@ staging:
     uri: "mongodb:localhost/cards_staging"
 production:
   db:
-    uri: ""
+    uri: "mongodb:localhost/cards_prod"
