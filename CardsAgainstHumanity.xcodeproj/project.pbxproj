@@ -15,6 +15,7 @@
 		E2626D5514D4C75D007AFA63 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = E2626D5414D4C75D007AFA63 /* AppDelegate.m */; };
 		E2626D5E14D4C7B2007AFA63 /* RoomViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E2626D5C14D4C7B2007AFA63 /* RoomViewController.m */; };
 		E2626D5F14D4C7B2007AFA63 /* RoomViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E2626D5D14D4C7B2007AFA63 /* RoomViewController.xib */; };
+		E299157D14D4E3D400C5B7F3 /* Room.m in Sources */ = {isa = PBXBuildFile; fileRef = E299157C14D4E3D400C5B7F3 /* Room.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,8 @@
 		E2626D5B14D4C7B2007AFA63 /* RoomViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RoomViewController.h; sourceTree = "<group>"; };
 		E2626D5C14D4C7B2007AFA63 /* RoomViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RoomViewController.m; sourceTree = "<group>"; };
 		E2626D5D14D4C7B2007AFA63 /* RoomViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RoomViewController.xib; sourceTree = "<group>"; };
+		E299157B14D4E3D400C5B7F3 /* Room.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Room.h; sourceTree = "<group>"; };
+		E299157C14D4E3D400C5B7F3 /* Room.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Room.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -81,6 +84,8 @@
 				E2626D5414D4C75D007AFA63 /* AppDelegate.m */,
 				E2626D4B14D4C75C007AFA63 /* Supporting Files */,
 				E2626D5B14D4C7B2007AFA63 /* RoomViewController.h */,
+				E299157B14D4E3D400C5B7F3 /* Room.h */,
+				E299157C14D4E3D400C5B7F3 /* Room.m */,
 				E2626D5C14D4C7B2007AFA63 /* RoomViewController.m */,
 				E2626D5D14D4C7B2007AFA63 /* RoomViewController.xib */,
 			);
@@ -163,6 +168,7 @@
 				E2626D5114D4C75D007AFA63 /* main.m in Sources */,
 				E2626D5514D4C75D007AFA63 /* AppDelegate.m in Sources */,
 				E2626D5E14D4C7B2007AFA63 /* RoomViewController.m in Sources */,
+				E299157D14D4E3D400C5B7F3 /* Room.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -266,6 +272,7 @@
 				E2626D5A14D4C75D007AFA63 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
