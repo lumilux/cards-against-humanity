@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		E296ACA814D526C1006F96D2 /* BlackCardsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E296ACA614D526C1006F96D2 /* BlackCardsViewController.m */; };
 		E296ACA914D526C1006F96D2 /* BlackCardsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E296ACA714D526C1006F96D2 /* BlackCardsViewController.xib */; };
+		E296ACB214D5B750006F96D2 /* CardsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E296ACB014D5B750006F96D2 /* CardsViewController.m */; };
+		E296ACB314D5B750006F96D2 /* CardsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E296ACB114D5B750006F96D2 /* CardsViewController.xib */; };
 		E299158F14D4E63100C5B7F3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E299158E14D4E63100C5B7F3 /* UIKit.framework */; };
 		E299159114D4E63100C5B7F3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E299159014D4E63100C5B7F3 /* Foundation.framework */; };
 		E299159314D4E63100C5B7F3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E299159214D4E63100C5B7F3 /* CoreGraphics.framework */; };
@@ -26,6 +28,9 @@
 		E296ACA514D526C1006F96D2 /* BlackCardsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlackCardsViewController.h; sourceTree = "<group>"; };
 		E296ACA614D526C1006F96D2 /* BlackCardsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlackCardsViewController.m; sourceTree = "<group>"; };
 		E296ACA714D526C1006F96D2 /* BlackCardsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BlackCardsViewController.xib; sourceTree = "<group>"; };
+		E296ACAF14D5B750006F96D2 /* CardsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CardsViewController.h; sourceTree = "<group>"; };
+		E296ACB014D5B750006F96D2 /* CardsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CardsViewController.m; sourceTree = "<group>"; };
+		E296ACB114D5B750006F96D2 /* CardsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = CardsViewController.xib; sourceTree = "<group>"; };
 		E299158A14D4E63100C5B7F3 /* CardsAgainstHumanity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CardsAgainstHumanity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E299158E14D4E63100C5B7F3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		E299159014D4E63100C5B7F3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -104,6 +109,9 @@
 				E296ACA514D526C1006F96D2 /* BlackCardsViewController.h */,
 				E296ACA614D526C1006F96D2 /* BlackCardsViewController.m */,
 				E296ACA714D526C1006F96D2 /* BlackCardsViewController.xib */,
+				E296ACAF14D5B750006F96D2 /* CardsViewController.h */,
+				E296ACB014D5B750006F96D2 /* CardsViewController.m */,
+				E296ACB114D5B750006F96D2 /* CardsViewController.xib */,
 			);
 			path = CardsAgainstHumanity;
 			sourceTree = "<group>";
@@ -173,6 +181,7 @@
 				E29915A914D4E66D00C5B7F3 /* RoomViewController.xib in Resources */,
 				E29915B414D4EA1800C5B7F3 /* WhiteCardsViewController.xib in Resources */,
 				E296ACA914D526C1006F96D2 /* BlackCardsViewController.xib in Resources */,
+				E296ACB314D5B750006F96D2 /* CardsViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -189,6 +198,7 @@
 				E29915AF14D4E69000C5B7F3 /* Room.m in Sources */,
 				E29915B314D4EA1800C5B7F3 /* WhiteCardsViewController.m in Sources */,
 				E296ACA814D526C1006F96D2 /* BlackCardsViewController.m in Sources */,
+				E296ACB214D5B750006F96D2 /* CardsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

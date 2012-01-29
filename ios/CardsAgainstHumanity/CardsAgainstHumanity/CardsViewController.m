@@ -1,24 +1,32 @@
 //
-//  BlackCardsViewController.m
+//  CardsViewController.m
 //  CardsAgainstHumanity
 //
 //  Created by Vivek Bhagwat on 1/29/12.
 //  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
 //
 
+#import "CardsViewController.h"
+#import "WhiteCardsViewController.h"
 #import "BlackCardsViewController.h"
 
-@implementation BlackCardsViewController
-@synthesize blackCard;
-@synthesize whiteCards;
-
+@implementation CardsViewController
+@synthesize cardBar;
+@synthesize white;
+@synthesize black;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        self.title = NSLocalizedString(@"Black", @"Black");
+        NSLog(@"init with nib name cards view controller");
         // Custom initialization
+        self.white = [[WhiteCardsViewController alloc] initWithNibName:@"WhiteCardsViewController" bundle:nil];
+        self.black = [[BlackCardsViewController alloc] initWithNibName:@"BlackCardsViewController" bundle:nil];
+        self.cardBar = [[UITabBar alloc] init];
+        self.viewControllers = [NSArray arrayWithObjects:self.white,self.black, nil];
+//        self.cardsController = [[UITabBarController alloc] init];
+//        self.cardsController.viewControllers = [NSArray arrayWithObjects:white, black, nil];
     }
     return self;
 }
@@ -43,8 +51,8 @@
     [super viewWillAppear:animated];
     
     //get card Data
-    whiteCards = [[NSArray alloc] initWithObjects:@"Masturbation", @"Golden Showers", nil];
-    blackCard = @"My favorite thing in the morning is a ___";
+    NSLog(@"IN THIS METHOD HERE");
+    
     
     //    [self. reloadData];
 }
