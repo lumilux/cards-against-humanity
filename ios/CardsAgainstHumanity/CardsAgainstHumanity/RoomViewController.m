@@ -8,9 +8,13 @@
 
 #import "RoomViewController.h"
 
+@interface RoomViewController () <NSURLConnectionDelegate, NSURLConnectionDataDelegate>
+@end
+
 @implementation RoomViewController
 
 @synthesize roomList;
+@synthesize cardsController;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -34,6 +38,9 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    
+    //download room info, parse and sort into objects
     
     self.roomList = [[NSArray alloc] initWithObjects:@"Room 1", @"Room 2", nil];
     self.title = @"Rooms";
@@ -157,13 +164,74 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
     /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
+     <#DetailViewController#> *detailViewController = 
+     [[<#DetailViewController#> alloc] 
+     initWithNibName:@"<#Nib name#>" 
+     bundle:nil];
      // ...
      // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
+     
+     [self.navigationController 
+     pushViewController:detailViewController 
+     animated:YES];
+     [detailViewController release];
      */
+    
+    NSMutableURLRequest *req = [[NSMutableURLRequest alloc] 
+                         initWithURL:[[NSURL alloc] initWithString:@"http://localhost/"]];
+    
+    [req setHTTPMethod:@"GET"];
+    
+    NSURLConnection *con = [[NSURLConnection alloc] initWithRequest:req delegate:self];
+    [con start];
+//    [self.navigationController pushViewController:self.cardsController animated:YES];
+    
+    
+//    self.cardsController.title = [[roomList objectAtIndex:indexPath.row] description];
 }
+
+- (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
+{
+    NSLog(@"connection did receive response");
+    NSLog([response description]);
+}
+
+
+- (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
+{
+     NSLog(@"connection did receive data");
+    NSLog([data description]);
+    
+    NSString *str = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSLog(str);
+    
+    if(YES || str == @"<html><body><h1>It works!</h1></body></html>") //room joined successfully
+    {
+        [self.navigationController pushViewController:self.cardsController animated:YES];
+    }
+}
+
+- (void)connectionDidFinishLoading:(NSURLConnection *)connection
+{
+    NSLog(@"connection did finish loading");
+    NSLog([connection description]);
+}
+
+- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Connection Error"
+                                                    message:@"Could not join room."
+                                                   delegate:nil
+                                          cancelButtonTitle:@"OK"
+                                          otherButtonTitles:nil];
+    // Display the alert to the user
+    [alert show];
+    [self.navigationController popViewControllerAnimated:NO];
+    alert = nil;
+}
+
+
+
 
 @end

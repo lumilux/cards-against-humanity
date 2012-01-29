@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E296ACA814D526C1006F96D2 /* BlackCardsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E296ACA614D526C1006F96D2 /* BlackCardsViewController.m */; };
+		E296ACA914D526C1006F96D2 /* BlackCardsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E296ACA714D526C1006F96D2 /* BlackCardsViewController.xib */; };
 		E299158F14D4E63100C5B7F3 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E299158E14D4E63100C5B7F3 /* UIKit.framework */; };
 		E299159114D4E63100C5B7F3 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E299159014D4E63100C5B7F3 /* Foundation.framework */; };
 		E299159314D4E63100C5B7F3 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E299159214D4E63100C5B7F3 /* CoreGraphics.framework */; };
@@ -16,9 +18,14 @@
 		E29915A814D4E66D00C5B7F3 /* RoomViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E29915A614D4E66D00C5B7F3 /* RoomViewController.m */; };
 		E29915A914D4E66D00C5B7F3 /* RoomViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E29915A714D4E66D00C5B7F3 /* RoomViewController.xib */; };
 		E29915AF14D4E69000C5B7F3 /* Room.m in Sources */ = {isa = PBXBuildFile; fileRef = E29915AE14D4E69000C5B7F3 /* Room.m */; };
+		E29915B314D4EA1800C5B7F3 /* WhiteCardsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = E29915B114D4EA1800C5B7F3 /* WhiteCardsViewController.m */; };
+		E29915B414D4EA1800C5B7F3 /* WhiteCardsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = E29915B214D4EA1800C5B7F3 /* WhiteCardsViewController.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E296ACA514D526C1006F96D2 /* BlackCardsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlackCardsViewController.h; sourceTree = "<group>"; };
+		E296ACA614D526C1006F96D2 /* BlackCardsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BlackCardsViewController.m; sourceTree = "<group>"; };
+		E296ACA714D526C1006F96D2 /* BlackCardsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BlackCardsViewController.xib; sourceTree = "<group>"; };
 		E299158A14D4E63100C5B7F3 /* CardsAgainstHumanity.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CardsAgainstHumanity.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E299158E14D4E63100C5B7F3 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		E299159014D4E63100C5B7F3 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
@@ -34,6 +41,9 @@
 		E29915A714D4E66D00C5B7F3 /* RoomViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RoomViewController.xib; sourceTree = "<group>"; };
 		E29915AD14D4E69000C5B7F3 /* Room.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Room.h; sourceTree = "<group>"; };
 		E29915AE14D4E69000C5B7F3 /* Room.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Room.m; sourceTree = "<group>"; };
+		E29915B014D4EA1800C5B7F3 /* WhiteCardsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WhiteCardsViewController.h; sourceTree = "<group>"; };
+		E29915B114D4EA1800C5B7F3 /* WhiteCardsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WhiteCardsViewController.m; sourceTree = "<group>"; };
+		E29915B214D4EA1800C5B7F3 /* WhiteCardsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WhiteCardsViewController.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +98,12 @@
 				E299159D14D4E63100C5B7F3 /* AppDelegate.h */,
 				E299159E14D4E63100C5B7F3 /* AppDelegate.m */,
 				E299159514D4E63100C5B7F3 /* Supporting Files */,
+				E29915B014D4EA1800C5B7F3 /* WhiteCardsViewController.h */,
+				E29915B114D4EA1800C5B7F3 /* WhiteCardsViewController.m */,
+				E29915B214D4EA1800C5B7F3 /* WhiteCardsViewController.xib */,
+				E296ACA514D526C1006F96D2 /* BlackCardsViewController.h */,
+				E296ACA614D526C1006F96D2 /* BlackCardsViewController.m */,
+				E296ACA714D526C1006F96D2 /* BlackCardsViewController.xib */,
 			);
 			path = CardsAgainstHumanity;
 			sourceTree = "<group>";
@@ -155,6 +171,8 @@
 			files = (
 				E299159914D4E63100C5B7F3 /* InfoPlist.strings in Resources */,
 				E29915A914D4E66D00C5B7F3 /* RoomViewController.xib in Resources */,
+				E29915B414D4EA1800C5B7F3 /* WhiteCardsViewController.xib in Resources */,
+				E296ACA914D526C1006F96D2 /* BlackCardsViewController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -169,6 +187,8 @@
 				E299159F14D4E63100C5B7F3 /* AppDelegate.m in Sources */,
 				E29915A814D4E66D00C5B7F3 /* RoomViewController.m in Sources */,
 				E29915AF14D4E69000C5B7F3 /* Room.m in Sources */,
+				E29915B314D4EA1800C5B7F3 /* WhiteCardsViewController.m in Sources */,
+				E296ACA814D526C1006F96D2 /* BlackCardsViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,6 +292,7 @@
 				E29915A414D4E63100C5B7F3 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
