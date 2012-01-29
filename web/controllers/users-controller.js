@@ -16,6 +16,9 @@ module.exports = function(app) {
           });
         }
       } else {
+        if(req.is('application/json')) {
+          res.contentType('application/json');
+        }
         res.redirect('/rooms');
       }
     });
