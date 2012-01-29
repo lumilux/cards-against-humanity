@@ -1,7 +1,7 @@
 var User = mongoose.model('User');
 
 module.exports = function(app) {
-	app.param('profileId', function(req, res, next, id) {
+	app.param('userid', function(req, res, next, id) {
     User
       .findOne({_id: id})
       .run(function (err, user) {
@@ -13,7 +13,7 @@ module.exports = function(app) {
   });
   
 	// show user profile
-	app.get('/user/:profileId', function(req, res) {
+	app.get('/user/:userid', function(req, res) {
 		var user = req.foundUser;
 		res.render('users/profile', {
 			black_cards: user.black_cards

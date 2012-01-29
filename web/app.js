@@ -17,7 +17,7 @@ require('./db-connect.js');
 var models_path = __dirname + '/models';
 User = require(models_path+'/user.js');
 //require(models_path+'/card.js');
-require(models_path+'/room.js');
+Room = require(models_path+'/room.js');
 
 /*
 var model_files = fs.readdirSync(models_path);
@@ -54,6 +54,31 @@ var controller_files = fs.readdirSync(controllers_path);
 controller_files.forEach(function(file){
   require(controllers_path+'/'+file)(app);
 });
+
+///////////////////////////////////////////////////
+/*
+var room1 = new Room({title: 'The Best Room', players: []});
+room1.save(function(err) {
+  if(err) return;
+  var player1 = new User({
+      name: 'Hans'
+    , cookie_id: 1
+    , _room_id: room1._id
+  });
+  player1.save(function(err) {
+    if(err) return;
+  });
+});
+User
+  .findOne({title: 'Hans'})
+  .populate('_room_id')
+  .run(function(err, user) {
+    if(err) return;
+    console.log('Room id is %d', user._room_id);
+});
+*/
+
+///////////////////////////////////////////////////
 
 var port = process.env.PORT || 3000;
 app.listen(port);
