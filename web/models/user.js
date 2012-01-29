@@ -1,7 +1,8 @@
 var UserSchema = new Schema({
-	room_id: Number
+		name: String
+	,	_room_id: Number
   , cookie_id: Number
-  , black_cards: [Card]
+  //, black_cards: [Card]
 });
 
-mongoose.model('User', UserSchema);
+var User = mongoose.model('User', UserSchema);

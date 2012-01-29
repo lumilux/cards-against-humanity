@@ -5,24 +5,29 @@
 
 var express = require('express')
   , fs = require('fs')
-  , faye = require('faye')
+  , pubnub = require('pubnub')
   , mongoose = require('mongoose');
 
 var config_file = require('yaml-config');
-exports = module.exports = config = config_file.readConfig('config/config.yaml');
+exports = module.exports = config = config_file.readConfig('web/config/config.yaml');
 
 require('./db-connect.js');
 
 // Configuration
 var models_path = __dirname + '/models';
+User = require(models_path+'/user.js');
+//require(models_path+'/card.js');
+Room = require(models_path+'/room.js');
+
+/*
 var model_files = fs.readdirSync(models_path);
 model_files.forEach(function(file) {
-  console.log(file);
   if (file == 'user.js')
     User = require(models_path+'/'+file);
   else
     require(models_path+'/'+file);
 });
+*/
 
 var app = express.createServer();
 
@@ -50,6 +55,31 @@ controller_files.forEach(function(file){
   require(controllers_path+'/'+file)(app);
 });
 
-var port = process.env.PORT || 8080;
+///////////////////////////////////////////////////
+/*
+var room1 = new Room({title: 'The Best Room', players: []});
+room1.save(function(err) {
+  if(err) return;
+  var player1 = new User({
+      name: 'Hans'
+    , cookie_id: 1
+    , _room_id: room1._id
+  });
+  player1.save(function(err) {
+    if(err) return;
+  });
+});
+User
+  .findOne({title: 'Hans'})
+  .populate('_room_id')
+  .run(function(err, user) {
+    if(err) return;
+    console.log('Room id is %d', user._room_id);
+});
+*/
+
+///////////////////////////////////////////////////
+
+var port = process.env.PORT || 3000;
 app.listen(port);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
