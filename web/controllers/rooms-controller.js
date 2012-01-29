@@ -12,7 +12,7 @@ module.exports = function(app) {
           room: room
         });
       } else {
-        res.redirect('/room/'+room._id);
+        res.redirect('/room/'+room._id+'/join');
       }
     });
   });
@@ -26,8 +26,7 @@ module.exports = function(app) {
 
   app.param('id', function(req, res, next, id) {
     Room
-      .findOne({_id: id})
-      .run(function (err, room) {
+      .findById(id, function (err, room) {
         if (err) return next(err);
         if (!room) return next(new Error('Failed to load Room ' + id));
         req.room = room;
@@ -35,36 +34,30 @@ module.exports = function(app) {
       });
   });
 
-  var show_room = function(req, res, after) {
+  app.get('/room/:id', function(req, res) {
     var r_room = req.room;
     Room
       .findOne({_id: r_room._id})
       .run(function(err, room) {
         var players = [];
         User
-          .find({cookie_id: {$in: room.players}},
+          .find({cookie_id: {"$in": room.players}},
           function(err, users) {
             var players = [];
             users
               .forEach(function(user) {
                 players.push(user);
             });
-            after(room, players);
+            if(req.is('application/json')) {
+              res.json(players);
+            } else {
+              res.render('rooms/show', {
+                title: 'Room',
+                room: room,
+                players: players
+              });
+            }
           });
-      });
-  };
-  app.get('/room/:id', function(req, res) {
-    show_room(req, res, function(room, players) {
-      res.render('rooms/show', {
-        title: 'Room',
-        room: room,
-        players: players
-      });
-    });
-  });
-  app.get('/room/:id/players.json', function(req, res) {
-    show_room(req, res, function(room, players) {
-      res.send(players);
     });
   });
 
@@ -82,9 +75,12 @@ module.exports = function(app) {
         } else {
           console.log("user: "+user);
           var uid = user.cookie_id;
+          console.log("user.cookie_id: "+user.cookie_id);
+          console.log("req.room._id:"+req.room._id);
           Room
             .update({_id: req.room._id},
-              {$push: {players: uid}}
+              {"$addToSet": {players: uid}},
+              function(err) {}
             );
           console.log("updated players");
           console.log("room: "+req.room);
@@ -98,8 +94,9 @@ module.exports = function(app) {
     console.log(req.session.id);
     var room = req.room;
     Room
-      .update({players: req.session.id},
-        {$pull: {players: req.session.id}}
+      .update({_id: req.params.id},
+        {"$pull": {players: req.session.id}},
+        function(err) {}
       );
     res.redirect('/rooms');
   });
@@ -111,10 +108,14 @@ module.exports = function(app) {
     .desc('name')
     .run(function(err, rooms) {
       if(err) throw err;
-      res.render('rooms/index', {
-        title: 'List of Rooms',
-        rooms: rooms
-      });
+      if(req.is('application/json')) {
+        res.json(rooms);
+      } else {
+        res.render('rooms/index', {
+          title: 'List of Rooms',
+          rooms: rooms
+        });
+      }
     });
   });
 };
