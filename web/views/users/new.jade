@@ -1,0 +1,10 @@
+h2= title
+
+form(method="post", action="/users/new")
+	input(type="hidden", name="_method", value="put")
+	p
+		label Name
+		br
+		input(type="text", name="user[name]", value=user.name)
+	
+	input(type="submit", value="Save")

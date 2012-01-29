@@ -5,19 +5,20 @@
 
 var express = require('express')
   , fs = require('fs')
-  , pubnub = require('pubnub')
-  , mongoose = require('mongoose');
+  , pubnub = require('pubnub');
 
 var config_file = require('yaml-config');
-exports = module.exports = config = config_file.readConfig('web/config/config.yaml');
+var app = exports = module.exports = config = express.createServer();
 
 require('./db-connect.js');
 
 // Configuration
 var models_path = __dirname + '/models';
+Card = require(models_path+'/card.js');
 User = require(models_path+'/user.js');
-//require(models_path+'/card.js');
 Room = require(models_path+'/room.js');
+
+require('./db-initialize.js');
 
 /*
 var model_files = fs.readdirSync(models_path);
@@ -29,8 +30,6 @@ model_files.forEach(function(file) {
 });
 */
 
-var app = express.createServer();
-
 app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
@@ -39,6 +38,8 @@ app.configure(function(){
   app.use(express.methodOverride());
   //app.use(app.router);
   app.use(express.static(__dirname + '/public'));
+  app.use(express.cookieParser());
+  app.use(express.session({cookie: {path: '/', httpOnly: true, maxAge: null}, secret:'kav6ajg5f'}));
 });
 
 app.configure('development', function(){

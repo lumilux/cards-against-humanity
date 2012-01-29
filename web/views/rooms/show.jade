@@ -1,0 +1,9 @@
+h2= title
+h3= room.name
+
+ul#players
+  - if(players.length)
+    != partial('../users/player_list', {collection: players, as: 'player'})
+  - else
+    #no-results No players. Something went wrong. Join 
+      a(href="/room/"+room._id+"/join") here
