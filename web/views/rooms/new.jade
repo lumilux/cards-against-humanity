@@ -1,11 +1,12 @@
 h2= title
 
-form(method="put", action="/rooms/new")
+form(method="post", action="/rooms/new")
+	input(type="hidden", name="_method", value="put")
 	p
 		label Name
 		br
 		input(type="text", name="room[name]", value=room.name)
 	
 	input(type="submit", value="Create")
-
+	br
 	a(href='/rooms', title="Go back") Go back

@@ -8,5 +8,6 @@
     , "pubnub": "3.1.4"
     , "mongoose": "2.5.1"
     , "express-mongoose": "0.0.4"
+    , "lazy": "1.0.7"
   }
 }
