@@ -5,7 +5,7 @@
 
 var express = require('express')
   , fs = require('fs')
-  , faye = require('faye')
+  , pubnub = require('pubnub')
   , mongoose = require('mongoose');
 
 var config_file = require('yaml-config');
@@ -15,14 +15,19 @@ require('./db-connect.js');
 
 // Configuration
 var models_path = __dirname + '/models';
+User = require(models_path+'/user.js');
+//require(models_path+'/card.js');
+require(models_path+'/room.js');
+
+/*
 var model_files = fs.readdirSync(models_path);
 model_files.forEach(function(file) {
-  console.log(file);
   if (file == 'user.js')
     User = require(models_path+'/'+file);
   else
     require(models_path+'/'+file);
 });
+*/
 
 var app = express.createServer();
 
@@ -50,6 +55,6 @@ controller_files.forEach(function(file){
   require(controllers_path+'/'+file)(app);
 });
 
-var port = process.env.PORT || 8080;
+var port = process.env.PORT || 3000;
 app.listen(port);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);

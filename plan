@@ -1,8 +1,8 @@
 express
-faye
 express-mongoose
 node.js
 mongo
+pubnub instead of faye
 
 players are subscribed to a room
 for each room, there is a deck of white cards and a deck of black cards
