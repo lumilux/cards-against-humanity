@@ -12,7 +12,6 @@ module.exports = function(app) {
           room: room
         });
       } else {
-        req.flash('notice', 'Room created successfully');
         res.redirect('/room/'+room._id);
       }
     });
