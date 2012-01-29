@@ -1,0 +1,9 @@
+development:
+  db:
+    uri: "mongodb:localhost/cards_dev"
+staging:
+  db:
+    uri: "mongodb:localhost/cards_staging"
+production:
+  db:
+    uri: ""

@@ -1,0 +1,7 @@
+- if(lastInCollection)
+	- clas = 'last'
+- else
+	- clas = ''
+div(class="room #{clas}")
+	h3.room_title
+		a(href='/room/'+room._id, title=room.title) #{room.title}
