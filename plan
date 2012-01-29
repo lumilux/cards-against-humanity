@@ -1,0 +1,34 @@
+express
+faye
+express-mongoose
+node.js
+mongo
+
+players are subscribed to a room
+for each room, there is a deck of white cards and a deck of black cards
+each player draws ten cards
+a random order is picked for Card Czar turns
+when a player is the Card Czar, they draw a black card and they wait until the other players play white cards, which are not shown (30 second timeout)
+once the others play cards, the Card Czar reviews them (without knowing who played what) and picks the best card.
+the player who played the best white card keeps the black card and their Awesome Points are incremented.
+players can vote to end the game with a haiku round: each player draws 2 more cards and picks 3 in a dramatic order.
+
+collection of white cards
+collection of black cards
+card:
+    _id
+    text
+
+collection of rooms
+room:
+    _id
+    players: [player]
+    black-deck: []
+    white-deck: []
+
+collection of players
+player:
+    _id
+    room_id
+    cookie-id
+    black-cards: []
