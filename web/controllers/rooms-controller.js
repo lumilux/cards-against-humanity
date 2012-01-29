@@ -30,6 +30,7 @@ module.exports = function(app) {
 	});
 
 	app.get('/', function(req, res) {
-		res.redirect('/rooms');
+		res.send('Hello world');
+		//res.redirect('/rooms');
 	});
 };

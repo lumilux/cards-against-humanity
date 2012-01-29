@@ -5,11 +5,10 @@
 
 var express = require('express')
   , fs = require('fs')
-  , pubnub = require('pubnub')
-  , mongoose = require('mongoose');
+  , pubnub = require('pubnub');
 
 var config_file = require('yaml-config');
-exports = module.exports = config = config_file.readConfig('web/config/config.yaml');
+var app = exports = module.exports = config = express.createServer();
 
 require('./db-connect.js');
 
@@ -28,8 +27,6 @@ model_files.forEach(function(file) {
     require(models_path+'/'+file);
 });
 */
-
-var app = express.createServer();
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
