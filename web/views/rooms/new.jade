@@ -1,0 +1,12 @@
+h2= title
+!= messages()
+
+form(method="put", action="/rooms/new")
+	p
+		label Name
+		br
+		input(type="text", name="room[name]", value=room.name)
+	
+	input(type="submit", value="Create")
+
+	a(href='/rooms', title="Go back") Go back
