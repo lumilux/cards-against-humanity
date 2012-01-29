@@ -8,9 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
+@class WhiteCardsViewController;
+
 @interface RoomViewController : UITableViewController
 {
-    NSArray *roomList;   
+    NSArray *roomList;
+    WhiteCardsViewController *cardsController;
 }
 @property (nonatomic, strong) NSArray *roomList;
+@property (nonatomic, strong) IBOutlet WhiteCardsViewController *cardsController;
 @end
