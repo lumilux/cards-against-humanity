@@ -1,0 +1,38 @@
+Requests to Server
+GET list of rooms at coordinates
+GET random white card from room_id
+GET random black card from room_id
+GET list of player_ids from room_id
+GET confirmation that you're in a room from room_id
+
+PUT join room_id with player_id
+DELETE leave room_id with player_id
+
+
+
+Conversations with Channel (Room)
+
+Card Czar:
+SEND message with selection
+Everyone else:
+RECEIVE message with selection (and compare to own)
+
+Anyone:
+SEND message asking for scores paired with player_id
+Everyone else:
+RECEIVE message with score request
+SEND message with score and player_id
+Anyone:
+RECEIVE message with score and player_id
+
+Card Czar:
+SEND drawn black card
+Everyone:
+RECEIVE drawn black card
+SEND selected white card(s) with player_id
+Card Czar:
+RECEIVE selected white card(s) from all player_ids
+SEND best selected white card(s) to all player_ids
+Everyone else:
+RECEIVE best white card(s) (and compare to own)
+
