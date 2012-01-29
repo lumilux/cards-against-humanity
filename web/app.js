@@ -9,7 +9,7 @@ var express = require('express')
   , mongoose = require('mongoose');
 
 var config_file = require('yaml-config');
-exports = module.exports = config = config_file.readConfig('config/config.yaml');
+exports = module.exports = config = config_file.readConfig('web/config/config.yaml');
 
 require('./db-connect.js');
 
