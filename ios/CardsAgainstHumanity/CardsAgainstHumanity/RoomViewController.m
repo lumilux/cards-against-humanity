@@ -7,6 +7,7 @@
 //
 
 #import "RoomViewController.h"
+#import "CardsViewController.h"
 
 @interface RoomViewController () <NSURLConnectionDelegate, NSURLConnectionDataDelegate>
 @end
@@ -208,6 +209,7 @@
     
     if(YES || str == @"<html><body><h1>It works!</h1></body></html>") //room joined successfully
     {
+        self.cardsController = [[CardsViewController alloc] initWithNibName:@"CardsViewController" bundle:nil];
         [self.navigationController pushViewController:self.cardsController animated:YES];
     }
 }

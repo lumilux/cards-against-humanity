@@ -7,18 +7,23 @@
 //
 
 #import "WhiteCardsViewController.h"
+#import "BlackCardsViewController.h"
+
+@interface WhiteCardsViewController ()  <UITabBarControllerDelegate>
+//@property (strong, nonatomic) UITabBarController *tabBarController;
+@end
 
 @implementation WhiteCardsViewController
 @synthesize whiteCards;
-@synthesize black;
 //@synthesize title;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
+        NSLog(@"init With Nib Name");
+        self.title = NSLocalizedString(@"White", @"White");
         // Custom initialization
-        self.title = NSLocalizedString(@"First", @"White Cards");
     }
     return self;
 }
@@ -41,7 +46,6 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
     //get card Data
     whiteCards = [[NSArray alloc] initWithObjects:@"Masturbation", @"Friction", @"Sex", @"Golden Showers", nil];
     
