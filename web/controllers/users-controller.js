@@ -2,15 +2,23 @@ var User = mongoose.model('User');
 
 module.exports = function(app) {
   app.put('/users/new', function(req, res) {
+    console.log(req);
     var user = new User(req.body.user);
     user.cookie_id = req.session.id;
     user.save(function(err) {
       if(err) {
-        res.render('users/new', {
-          title: 'User name - error',
-          user: user
-        });
+        if(req.is('application/json')) {
+          res.json("Could not create new user.", 500);
+        } else {
+          res.render('users/new', {
+            title: 'User name - error',
+            user: user
+          });
+        }
       } else {
+        if(req.is('application/json')) {
+          res.contentType('application/json');
+        }
         res.redirect('/rooms');
       }
     });
@@ -18,7 +26,7 @@ module.exports = function(app) {
 
 	app.param('userid', function(req, res, next, id) {
     User
-      .findOne({_id: id})
+      .findOne({"_id": User.ObjectId(id)})
       .run(function (err, user) {
         if (err) return next(err);
         if (!user) return next(new Error('Failed to load User ' + id));
