@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "RoomViewController.h"
+#import "LoginViewController.h"
 
 @implementation AppDelegate
 
@@ -18,9 +19,8 @@
 didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
-    UIViewController *rootController = 
-    [[RoomViewController alloc] 
-     initWithNibName:@"RoomViewController" bundle:nil];
+//    UIViewController *rootController = [[RoomViewController alloc] initWithNibName:@"RoomViewController" bundle:nil];
+    UIViewController *rootController = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
     
     navigationController = [[UINavigationController alloc]
                             initWithRootViewController:rootController];
