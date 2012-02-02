@@ -84,6 +84,7 @@ module.exports = function(app) {
             );
           console.log("updated players");
           console.log("room: "+req.room);
+          req.session.room = req.room._id;
           res.redirect('/room/'+req.room._id);
         }
       });

@@ -19,6 +19,7 @@ module.exports = function(app) {
         if(req.is('application/json')) {
           res.contentType('application/json');
         }
+        req.session.username = user.name;
         res.redirect('/rooms');
       }
     });
