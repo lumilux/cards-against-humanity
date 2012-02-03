@@ -23,4 +23,26 @@ $("#ping").click(function() {
 	});
 });
 
+$(document).ready(function() {
+	console.log(window.location.pathname);
+	var path = window.location.pathname;
+	
+	if(path == "/rooms") {
+		console.log("in /rooms");
+		CAH.Room = Ember.Object.create({
+			name: "room test name"			
+		});
+		
+		var rm = CAH.Room.create();
+		console.log(rm);
+		
+		
+		
+	} else if(path == )
+	
+});
+
+console.log('here here');
+console.log($('#username'));
+
 })();
