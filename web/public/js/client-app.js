@@ -30,7 +30,12 @@ $(document).ready(function() {
 	if(path == "/rooms") {
 		console.log("in /rooms");
 		Room = Ember.Object.extend({
-						
+			room_name: "default"
+			id: 
+			
+			name: function(rm) {
+				this.get('room_name');
+			}
 		});
 		
 		var rm = Room.create({
