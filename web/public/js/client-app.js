@@ -45,4 +45,7 @@ $(document).ready(function() {
 console.log('here here');
 console.log($('#username'));
 
+// replace single underscores in black cards with a fancy blank line
+$(".card span").replaceText("_", "<span class='_'></span>");
+
 })();
