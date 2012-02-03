@@ -23,20 +23,47 @@ $("#ping").click(function() {
 
 $(document).ready(function() {
 	console.log(window.location.pathname);
+	
+	
+	var CAH = Ember.Application.create();
+	
 	var path = window.location.pathname;
 	
-	if(path == "/rooms") {
+	var logo = document.createElement('div');
+	var logoText = document.createTextNode("Cards Against Humanity");
+	console.log(logo);
+	console.log(logoText);
+	// logo.attr('id', 'logo');
+	console.log(logo);
+	logo.appendChild(logoText);
+	$('#container').prependChild(logo);
+	
+	if(path.match(/\/rooms\/?/)) {
+		$(document).append('div');//.text('blah');
+		
+		
 		console.log("in /rooms");
-		CAH.Room = Ember.Object.create({
-			name: "room test name"			
+		CAH.Room = Ember.Object.extend({
+			room_name: "default",
+			id: "0",
+			
+			name: function(rm) {
+				this.get('room_name');
+			}
 		});
 		
-		var rm = CAH.Room.create();
+		var rm = CAH.Room.create({
+			name: "room A B",
+			id: "1"
+		});
 		console.log(rm);
 		
 		
 		
-	} else if(path == )
+	} else if(path == "blah")
+	{
+		
+	}
 	
 });
 
