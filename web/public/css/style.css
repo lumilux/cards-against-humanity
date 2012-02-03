@@ -68,3 +68,45 @@ input.newuser#username {
 	font-size:200%;
 	text-align:center;
 }
+
+
+
+/* styles for cards */
+
+#card-container {
+    width: 640px;
+    height: 712px;
+    margin: 10px;
+    overflow: hidden;
+    clear: both;
+}
+
+.card {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    width: 36%;
+    height: 30%;
+    border: 1px solid #000;
+    padding: 1em;
+    margin: 1.5% 6%;
+    font: 600 1em/1.5em "Helvetica Neue", Helvetica, Arial, sans-serif;
+    -webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+    float: left;
+}
+
+.black {
+    color: #fff;
+    background-color: #000;
+    font-weight: 500;
+}
+
+._ {
+    display: inline-block;
+    width: 5em;
+    border-bottom: 1px solid #fff;
+    line-height: 0.8em;
+    margin-right: 0.1em;
+}
