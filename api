@@ -10,8 +10,10 @@ DELETE leave room_id with player_id
 users
 GET /
     name request, listing of rooms
-PUT /users/new
+POST /users/new
     name re-request on error, redirect to /
+DELETE /users/
+	logout of session
 
 rooms
 GET /rooms
