@@ -10,9 +10,7 @@ var pubnub = PUBNUB.init({
 PUBNUB.subscribe({
     channel  : 'my_browser_channel',
     callback : function(message) {
-        output.innerHTML = [
-            message, '<br />', output.innerHTML
-        ].join('');
+        console.log('subscribed');
     }
 });
 
