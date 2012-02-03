@@ -5,6 +5,7 @@ form(method="post", action="/users/new")
 	p
 		label Name
 		br
-		input(type="text", name="user[name]", value=user.name)
-	
-	input(type="submit", value="Save")
+		<!-- input#newuser(type="text", name="user[name]", value=user.name) -->
+		<input id="username" class="newuser" type="text" name="user[name]" autofocus required>
+		
+	input.newuser(type="submit", value="Save")
