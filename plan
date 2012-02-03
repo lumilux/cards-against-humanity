@@ -39,5 +39,15 @@ player:
 client-side game logic:
 
 setup()
-while not exit_condition:
-    
+subscribe to room:
+  if msg == 'request end game':
+    end_game()
+  if msg == 'white card [...]':
+    if played_cards.length == CARDS_NEEDED:
+      judge_cards()
+  if msg == 'player X card wins [...]. Y is next':
+    if X == me:
+      black_cards_won.add(card)
+    if Y == me:
+      play_random_black_card()
+  if msg == 'player X played black card:'

@@ -1,12 +1,13 @@
 var User = mongoose.model('User');
 
 module.exports = function(app) {
-  app.put('/users/new', function(req, res) {
-    console.log(req);
+  app.post('/users', function(req, res) {
+    //console.log(req);
     var user = new User(req.body.user);
     user.cookie_id = req.session.id;
     user.save(function(err) {
       if(err) {
+        // TODO: handle duplicate name 
         if(req.is('application/json')) {
           res.json("Could not create new user.", 500);
         } else {
@@ -22,6 +23,23 @@ module.exports = function(app) {
         req.session.username = user.name;
         res.redirect('/rooms');
       }
+    });
+  });
+
+  app.del('/users', function (req, res) {
+    // also remove user from current room?
+    User
+      .remove({cookie_id: req.session.id})
+      .run(function (err, user) {
+        req.session.destroy();
+        res.redirect('/');
+      });
+  });
+
+  app.get('/users/new', function(req, res) {
+    res.render('users/new', {
+      title: 'New User',
+      user: new User({})
     });
   });
 

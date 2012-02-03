@@ -1,7 +1,17 @@
 !!! 5
 html(lang="en")
-  != partial('../includes/head')
+  include ../includes/head
+    script(type="text/x-handlebars", data-template-name="say-hello").
+      Hello, <strong>{{CAH.username}}</strong>.
+    script(type="text/x-handlebars", data-template-name="card-container").
+      <div id="card-container" class="container">
+        {{CAH.cards}}
+      </div>
+      
   body
+    script(type="text/x-handlebars").
+      This is the first Handlebar template we start with.
+
     #container
       != partial('../includes/header')
       != body

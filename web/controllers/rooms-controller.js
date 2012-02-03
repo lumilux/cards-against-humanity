@@ -2,7 +2,7 @@ var Room = mongoose.model('Room');
 var User = mongoose.model('User');
 
 module.exports = function(app) {
-  app.put('/rooms/new', function(req, res) {
+  app.post('/rooms', function(req, res) {
     var room = new Room(req.body.room);
     room.save(function(err) {
       if(err) {
@@ -60,7 +60,7 @@ module.exports = function(app) {
     });
   });
 
-  app.get('/room/:id/join', function(req, res, next) {
+  app.put('/room/:id/join', function(req, res, next) {
     console.log("session: "+req.session.id);
     User
       .findOne({cookie_id: req.session.id})
@@ -100,7 +100,7 @@ module.exports = function(app) {
   });
 
   app.del('/room/:id/leave', function(req, res) {
-    console.log("FINE THEN. LEAVE ME.");
+    console.log("leaving room");
     console.log(req.session.id);
     var room = req.room;
     Room
@@ -112,9 +112,17 @@ module.exports = function(app) {
               {in_room: false},
               function(err) {}
             );
+          //TODO: if no one left in room, delete room
         }
       );
     res.redirect('/rooms');
+  });
+
+  app.put('/room/:id/start', function(req, res) {
+    // add player to ready_players.
+    // if everyone is ready, 
+    //Room
+    //  .find({_id: req.params.id})
   });
 
   // list available rooms

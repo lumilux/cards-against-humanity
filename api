@@ -10,14 +10,20 @@ DELETE leave room_id with player_id
 users
 GET /
     name request, listing of rooms
-POST /users/
+POST /users
     name re-request on error, redirect to /
-DELETE /users/
-		logout of session
+GET /users/new
+    show new user form
+DELETE /users
+	logout of session
 
 rooms
 GET /rooms
     list available rooms
+POST /rooms
+    add new room
+GET /rooms/new
+    show new room form
 DELETE /room/:id/leave
     leave room with :id
 PUT /room/:id/join
@@ -43,10 +49,12 @@ Starting a game
 Drawing a new card
     Anyone:
         SEND draw new [color] card
+            {action: "draw card", body: {color: "white"}}
     Server:
         RECEIVE draw new [color] card
             -> choose new card from [color] deck, add to discard deck
         SEND [color] card's contents and ID to player #x
+            {action: "new card", body: {color: "white", content: "Nipple blades"}, recipient: Player.ObjectId}
     Anyone:
         RECEIVE [color] card's contents and ID to player #x
             -> if white, compare to self
@@ -61,10 +69,10 @@ Playing white card
 
 Selecting the best white card that someone played
     Card Czar:
-        SEND pick white card #x
+        SEND pick player #x's card
     Everyone else:
-        RECEIVE white card #x picked
-           -> compare to own, update score
+        RECEIVE player #x
+           -> if self, update score
 
 Ending the game
     Card Czar:
