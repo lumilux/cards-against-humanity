@@ -29,16 +29,22 @@ $(document).ready(function() {
 	
 	if(path == "/rooms") {
 		console.log("in /rooms");
-		CAH.Room = Ember.Object.create({
-			name: "room test name"			
+		Room = Ember.Object.extend({
+						
 		});
 		
-		var rm = CAH.Room.create();
+		var rm = Room.create({
+			name: "room A B",
+			id: "1"
+		});
 		console.log(rm);
 		
 		
 		
-	} else if(path == )
+	} else if(path == "blah")
+	{
+		
+	}
 	
 });
 
