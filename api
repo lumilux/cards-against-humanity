@@ -24,17 +24,14 @@ POST /rooms
     add new room
 GET /rooms/new
     show new room form
-DELETE /room/:id/leave
-    leave room with :id
-PUT /room/:id/join
-    join room with :id
+DELETE /room
+    leave room with :id as DELETE variable
+PUT /room
+    join room with :id as PUT variable
 GET /room/:id
     get list of players in room
-PUT /room/:id/start
-    say we're ready to start the game immediately
-
-
-
+PUT /room/start
+    say we're ready to start the game immediately with :id as PUT variable
 
 
 Conversations with Channel (Room)
@@ -42,6 +39,7 @@ Conversations with Channel (Room)
 Starting a game
     Server:
         SEND room full / all players ready
+			{"action":"room ready", "body":{"id":0}, receipents:[Players.ObjectIds]}
     Anyone:
         RECEIVE room full / all players ready
             -> first card czar draw card, etc.
@@ -49,12 +47,12 @@ Starting a game
 Drawing a new card
     Anyone:
         SEND draw new [color] card
-            {action: "draw card", body: {color: "white"}}
+            {"action": "draw card", "body": {color: "white"}}
     Server:
         RECEIVE draw new [color] card
             -> choose new card from [color] deck, add to discard deck
         SEND [color] card's contents and ID to player #x
-            {action: "new card", body: {color: "white", content: "Nipple blades"}, recipient: Player.ObjectId}
+            {"action": "new card", "body": {"color": "white", "content": "Nipple blades"}, "recipients": [Player.ObjectId]}
     Anyone:
         RECEIVE [color] card's contents and ID to player #x
             -> if white, compare to self
@@ -63,6 +61,7 @@ Drawing a new card
 Playing white card
     Anyone:
         SEND selected white card(s) with player #x
+		{"action":"selected card", "body":{"color":"white", "content":"Nipple blades"}, "recipients": [(CardCzar)Player.ObjectId]}
     Card Czar:
         RECEIVE selected white card(s) from player #x
             -> until (players - 1) cards received
@@ -70,6 +69,7 @@ Playing white card
 Selecting the best white card that someone played
     Card Czar:
         SEND pick player #x's card
+		{"action":"round winner", "body":{"color":"white", "content":"Nipple blades"}, "recipients": [Players.ObjectIds]}
     Everyone else:
         RECEIVE player #x
            -> if self, update score
@@ -77,6 +77,7 @@ Selecting the best white card that someone played
 Ending the game
     Card Czar:
         SEND let's end the round
+		{"action":"room end", "body":{}, "recipients": [Players.ObjectIds]}
     Everyone else:
         RECEIVE end round request
             -> end round
