@@ -1,7 +1,5 @@
 Requests to Server
-GET list of rooms at coordinates
-GET random white card from room_id
-GET random black card from room_id
+//todo: GET list of rooms at coordinates
 GET list of player_ids from room_id
 GET confirmation that you're in a room from room_id
 
@@ -9,30 +7,66 @@ PUT join room_id with player_id
 DELETE leave room_id with player_id
 
 
+users
+GET /
+    name request, listing of rooms
+PUT /users/new
+    name re-request on error, redirect to /
+
+rooms
+GET /rooms
+    list available rooms
+DELETE /room/:id/leave
+    leave room with :id
+PUT /room/:id/join
+    join room with :id
+GET /room/:id
+    get list of players in room
+PUT /room/:id/start
+    say we're ready to start the game immediately
+
+
+
+
 
 Conversations with Channel (Room)
 
-Card Czar:
-SEND message with selection
-Everyone else:
-RECEIVE message with selection (and compare to own)
+Starting a game
+    Server:
+        SEND room full / all players ready
+    Anyone:
+        RECEIVE room full / all players ready
+            -> first card czar draw card, etc.
 
-Anyone:
-SEND message asking for scores paired with player_id
-Everyone else:
-RECEIVE message with score request
-SEND message with score and player_id
-Anyone:
-RECEIVE message with score and player_id
+Drawing a new card
+    Anyone:
+        SEND draw new [color] card
+    Server:
+        RECEIVE draw new [color] card
+            -> choose new card from [color] deck, add to discard deck
+        SEND [color] card's contents and ID to player #x
+    Anyone:
+        RECEIVE [color] card's contents and ID to player #x
+            -> if white, compare to self
+            -> if black, make it black card of this round
+        
+Playing white card
+    Anyone:
+        SEND selected white card(s) with player #x
+    Card Czar:
+        RECEIVE selected white card(s) from player #x
+            -> until (players - 1) cards received
 
-Card Czar:
-SEND drawn black card
-Everyone:
-RECEIVE drawn black card
-SEND selected white card(s) with player_id
-Card Czar:
-RECEIVE selected white card(s) from all player_ids
-SEND best selected white card(s) to all player_ids
-Everyone else:
-RECEIVE best white card(s) (and compare to own)
+Selecting the best white card that someone played
+    Card Czar:
+        SEND pick white card #x
+    Everyone else:
+        RECEIVE white card #x picked
+           -> compare to own, update score
 
+Ending the game
+    Card Czar:
+        SEND let's end the round
+    Everyone else:
+        RECEIVE end round request
+            -> end round

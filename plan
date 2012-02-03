@@ -1,8 +1,10 @@
+jquery
+ember
+pubnub instead of faye
 express
 express-mongoose
 node.js
-mongo
-pubnub instead of faye
+mongodb
 
 players are subscribed to a room
 for each room, there is a deck of white cards and a deck of black cards
@@ -16,20 +18,26 @@ players can vote to end the game with a haiku round: each player draws 2 more ca
 collection of white cards
 collection of black cards
 card:
-    _id
-    text
+  _id
+  text
 
 collection of rooms
 room:
-    _id
-    title
-    players: [player]
-    black-deck: []
-    white-deck: []
+  _id
+  title
+  players: [player]
+  black-deck: []
+  white-deck: []
 
 collection of players
 player:
-    _id
-    room_id
-    cookie-id
-    black-cards: []
+  _id
+  room_id
+  cookie-id
+  black-cards: []
+
+client-side game logic:
+
+setup()
+while not exit_condition:
+    

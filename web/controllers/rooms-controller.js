@@ -4,7 +4,6 @@ var User = mongoose.model('User');
 module.exports = function(app) {
   app.put('/rooms/new', function(req, res) {
     var room = new Room(req.body.room);
-    //get session id of user
     room.save(function(err) {
       if(err) {
         res.render('rooms/new', {
@@ -77,27 +76,43 @@ module.exports = function(app) {
           var uid = user.cookie_id;
           console.log("user.cookie_id: "+user.cookie_id);
           console.log("req.room._id:"+req.room._id);
-          Room
-            .update({_id: req.room._id},
-              {"$addToSet": {players: uid}},
-              function(err) {}
-            );
-          console.log("updated players");
-          console.log("room: "+req.room);
-          req.session.room = req.room._id;
-          res.redirect('/room/'+req.room._id);
+          if(!user.in_room) {
+            Room
+              .update({_id: req.room._id},
+                {"$addToSet": {players: uid}},
+                function(err) {
+                  User
+                    .update({_id: uid},
+                      {in_room: true},
+                      function(err) {}
+                    );
+                }
+              );
+            console.log("updated players");
+            console.log("room: "+req.room);
+            req.session.room = req.room._id;
+            res.redirect('/room/'+req.room._id);
+          } else {
+            res.redirect('/rooms');
+          }
         }
       });
   });
 
-  app.get('/room/:id/leave', function(req, res) {
+  app.del('/room/:id/leave', function(req, res) {
     console.log("FINE THEN. LEAVE ME.");
     console.log(req.session.id);
     var room = req.room;
     Room
       .update({_id: req.params.id},
         {"$pull": {players: req.session.id}},
-        function(err) {}
+        function(err) {
+          User
+            .update({_id: req.session.id},
+              {in_room: false},
+              function(err) {}
+            );
+        }
       );
     res.redirect('/rooms');
   });

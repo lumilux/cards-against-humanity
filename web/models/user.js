@@ -1,6 +1,6 @@
 var UserSchema = new Schema({
 		name: String
-  , cookie_id: String
+	, cookie_id: String
   , black_cards: [Card.ObjectId]
 });
 

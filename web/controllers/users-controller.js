@@ -37,6 +37,7 @@ module.exports = function(app) {
   });
   
 	// show user profile
+  /*
 	app.get('/user/:userid', function(req, res) {
 		var user = req.user;
 		res.render('users/profile', {
@@ -44,6 +45,7 @@ module.exports = function(app) {
 			, black_cards: user.black_cards
 		});
 	});
+  */
 
   app.get('/', function(req, res) {
     User
