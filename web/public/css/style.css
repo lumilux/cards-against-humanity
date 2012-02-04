@@ -7,7 +7,7 @@
 }
 
 body {
-  width: 600px;
+  width: 545px;
   padding: 0px;
   font: 18px "Helvetica Neue", Helvetica, Arial, sans-serif;
 	display:block;
@@ -97,7 +97,7 @@ footer p {
     height: 712px;
     margin: 0 auto;
     margin-top: -1em;
-    padding: 0 0 0 6%;
+    padding: 0 0 0 0;
     overflow: hidden;
     clear: both;
 }
