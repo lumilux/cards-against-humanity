@@ -39,7 +39,7 @@ Conversations with Channel (Room)
 Starting a game
     Server:
         SEND room full / all players ready
-			{"action":"room ready", "body":{"id":0}, receipents:[Players.ObjectIds]}
+			{action:"room ready", body:{players: [Player.ObjectId]}, recipients:[Player.ObjectId]}
     Anyone:
         RECEIVE room full / all players ready
             -> first card czar draw card, etc.
@@ -47,12 +47,12 @@ Starting a game
 Drawing a new card
     Anyone:
         SEND draw new [color] card
-            {"action": "draw card", "body": {color: "white"}}
+            {action: "draw card", body: {color: "white"}}
     Server:
         RECEIVE draw new [color] card
             -> choose new card from [color] deck, add to discard deck
-        SEND [color] card's contents and ID to player #x
-            {"action": "new card", "body": {"color": "white", "content": "Nipple blades"}, "recipients": [Player.ObjectId]}
+        SEND [color] card's contents and ID to player #x (everyone if black)
+            {action: "new card", body: {color: "white", content: "Nipple blades"}, recipients: [Player.ObjectId]}
     Anyone:
         RECEIVE [color] card's contents and ID to player #x
             -> if white, compare to self
@@ -61,7 +61,7 @@ Drawing a new card
 Playing white card
     Anyone:
         SEND selected white card(s) with player #x
-		{"action":"selected card", "body":{"color":"white", "content":"Nipple blades"}, "recipients": [(CardCzar)Player.ObjectId]}
+		{request:"selected card", body:{color:"white", content:"Nipple blades"}, recipients: [(CardCzar)Player.ObjectId]}
     Card Czar:
         RECEIVE selected white card(s) from player #x
             -> until (players - 1) cards received
@@ -69,7 +69,7 @@ Playing white card
 Selecting the best white card that someone played
     Card Czar:
         SEND pick player #x's card
-		{"action":"round winner", "body":{"color":"white", "content":"Nipple blades"}, "recipients": [Players.ObjectIds]}
+		{request:"round winner", body:{color:"white", content:"Nipple blades"}, recipients: [Players.ObjectId]}
     Everyone else:
         RECEIVE player #x
            -> if self, update score
@@ -77,7 +77,7 @@ Selecting the best white card that someone played
 Ending the game
     Card Czar:
         SEND let's end the round
-		{"action":"room end", "body":{}, "recipients": [Players.ObjectIds]}
+		{request:"room end", body:{}, recipients: [Player.ObjectId]}
     Everyone else:
         RECEIVE end round request
             -> end round

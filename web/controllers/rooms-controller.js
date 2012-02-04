@@ -44,12 +44,14 @@ module.exports = function(app) {
           .find({cookie_id: {"$in": room.players}},
           function(err, users) {
             var players = [];
+
             users
               .forEach(function(user) {
                 players.push(user);
             });
+
             if(req.is('application/json')) {
-              res.json(players);
+              res.json({user: req.session.id, players: players});
             } else {
               res.render('rooms/show', {
                 title: 'Room',
