@@ -17,6 +17,7 @@ module.exports = function(app) {
   });
 
   app.get('/rooms/new', function(req, res) {
+		console.log('ASDFKLJASKDFJA');
     res.render('rooms/new', {
       title: 'Create New Room',
       room: new Room({})
@@ -60,8 +61,11 @@ module.exports = function(app) {
     });
   });
 
-  app.put('/room/:id/join', function(req, res, next) {
+  app.put('/room/', function(req, res, next) {
+		var room_id = req.body.id;
+		console.log("room_id: " + room_id);
     console.log("session: "+req.session.id);
+		// console.log(express.bodyParser());
     User
       .findOne({cookie_id: req.session.id})
       .run(function(err, user) {
@@ -75,10 +79,10 @@ module.exports = function(app) {
           console.log("user: "+user);
           var uid = user.cookie_id;
           console.log("user.cookie_id: "+user.cookie_id);
-          console.log("req.room._id:"+req.room._id);
+          console.log("req.room._id:"+room_id);
           if(!user.in_room) {
             Room
-              .update({_id: req.room._id},
+              .update({_id: room_id},
                 {"$addToSet": {players: uid}},
                 function(err) {
                   User
@@ -89,9 +93,9 @@ module.exports = function(app) {
                 }
               );
             console.log("updated players");
-            console.log("room: "+req.room);
-            req.session.room = req.room._id;
-            res.redirect('/room/'+req.room._id);
+            // console.log("room: "+req.room);
+            req.session.room = room_id;
+            res.redirect('/room/'+room_id);
           } else {
             res.redirect('/rooms');
           }
@@ -99,12 +103,13 @@ module.exports = function(app) {
       });
   });
 
-  app.del('/room/:id/leave', function(req, res) {
+  app.del('/room/', function(req, res) {
     console.log("leaving room");
+		var room_id = req.body.id
     console.log(req.session.id);
     var room = req.room;
     Room
-      .update({_id: req.params.id},
+      .update({_id: room_id},
         {"$pull": {players: req.session.id}},
         function(err) {
           User
@@ -118,7 +123,9 @@ module.exports = function(app) {
     res.redirect('/rooms');
   });
 
-  app.put('/room/:id/start', function(req, res) {
+  app.put('/room/start', function(req, res) {
+		var room_id = req.body.room_id;
+		var player_id = req.body.player_id;
     // add player to ready_players.
     // if everyone is ready, 
     //Room
