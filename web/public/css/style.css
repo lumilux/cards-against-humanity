@@ -75,6 +75,10 @@ input.newuser#username {
 	text-align:center;
 }
 
+#rooms {
+  margin-bottom: 1em;
+}
+
 footer {
   font-size: 0.7em;
   text-align: center;
