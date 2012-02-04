@@ -39,7 +39,7 @@ Conversations with Channel (Room)
 Starting a game
     Server:
         SEND room full / all players ready
-			{"action":"room ready", "body":{"id":0}, receipents:[Players.ObjectIds]}
+			{"action":"room ready", "body":{"id":0}, recipients:[Players.ObjectIds]}
     Anyone:
         RECEIVE room full / all players ready
             -> first card czar draw card, etc.
@@ -47,7 +47,7 @@ Starting a game
 Drawing a new card
     Anyone:
         SEND draw new [color] card
-            {"action": "draw card", "body": {color: "white"}}
+            {"action": "draw card", "body": {color: "white"}, "recipients":["server"]}
     Server:
         RECEIVE draw new [color] card
             -> choose new card from [color] deck, add to discard deck
