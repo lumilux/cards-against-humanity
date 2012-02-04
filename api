@@ -47,12 +47,12 @@ Starting a game
 Drawing a new card
     Anyone:
         SEND draw new [color] card
-            {action: "draw card", body: {color: "white"}}
+            {request: "draw card", body: {color: "white"}, recipients: [SERVER]}
     Server:
         RECEIVE draw new [color] card
             -> choose new card from [color] deck, add to discard deck
         SEND [color] card's contents and ID to player #x (everyone if black)
-            {action: "new card", body: {color: "white", content: "Nipple blades"}, recipients: [Player.ObjectId]}
+            {request: "new card", body: {color: "white", content: "Nipple blades"}, recipients: [Player.ObjectId]}
     Anyone:
         RECEIVE [color] card's contents and ID to player #x
             -> if white, compare to self
