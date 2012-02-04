@@ -3,18 +3,19 @@ html(lang="en")
   include ../includes/head
     script(type="text/x-handlebars", data-template-name="say-hello").
       Hello, <strong>{{CAH.username}}</strong>.
-    script(type="text/x-handlebars", data-template-name="card-container").
-      <div id="card-container" class="container">
-        {{CAH.cards}}
-      </div>
     script(type="text/x-handlebars", data-template-name="cards-hand").
-      <div id="cards-hand" class="container">
-        {{#each cards}}
-          <div class="{{color}} card">
-            <span>{{content}}</span>
-          </div>
-        {{/each}}
-      </div>
+      <p id="current_black_card">{{black_card}}</p>
+      {{#each cards}}
+        <div class="{{color}} card">
+          <span>{{content}}</span>
+        </div>
+      {{/each}}
+    script(type="text/x-handlebars", data-template-name="cards-in-play").
+      {{#each cards}}
+        <div class="{{color}} card">
+          <span>{{content}}</span>
+        </div>
+      {{/each}}
       
   body
     script(type="text/x-handlebars").

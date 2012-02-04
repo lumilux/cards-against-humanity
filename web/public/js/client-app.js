@@ -123,11 +123,11 @@ CAH._app = {
 		this.do_white_player_wait();
 	},
 
-	draw_white_card() {
+	draw_white_card: function() {
 		this.emit("draw card", [this.SERVER], {color: "white"});
 	},
 
-	draw_black_card() {
+	draw_black_card: function() {
 		this.emit("draw card", [this.SERVER], {color: "black"});
 	},
 
@@ -140,8 +140,7 @@ CAH._app = {
 	},
 
 	announce: function() {
-		emit("player joined", recipients: this.players, 
-			body: {id: this.user_id, name: });
+		emit("player joined", this.players, {id: this.user_id, name: user_name});
 	},
 
 	SERVER: "—server—"
@@ -153,8 +152,23 @@ CAH._app = {
 
 $(document).ready(function() {
 	console.log(window.location.pathname);
+
+	CAH.playedCards = Ember.Object.create({
+		black_card: "Lorem ipsum dolor sit amet _.",
+		cards: [{color: "white", content: "Foo 1"},
+			{color: "white", content: "Bar 1"},
+			{color: "white", content: "Baz 1"},
+			{color: "white", content: "Foo 2"},
+			{color: "white", content: "Bar 2"}]
+	});
+
+	CAH.playedCardsView = Ember.View.create({
+		templateName: 'cards-in-play',
+		cardsBinding: Ember.Binding.oneWay('CAH.playedCards.cards')
+	});
 	
 	CAH.hand = Ember.Object.create({
+		black_card: "Lorem ipsum dolor sit amet _.",
 		cards: [{color: "white", content: "Foo 1"},
 			{color: "white", content: "Bar 1"},
 			{color: "white", content: "Baz 1"},
@@ -165,7 +179,7 @@ $(document).ready(function() {
 
 	CAH.handView = Ember.View.create({
 		templateName: 'cards-hand',
-		cardsBinding: Ember.Binding.oneWay('CAH.hand.cards');
+		cardsBinding: Ember.Binding.oneWay('CAH.hand.cards')
 	});
 
 
@@ -173,58 +187,96 @@ $(document).ready(function() {
 	
 	var path = window.location.pathname;
 	
-	var room_match = path.match(/\/room\/(\w*)\/?/);
-
-	if(typeof room_match !== "undefined" && room_match !== null) {
-		//get the room id so we can subscribe to the right pubsub channel
-		var room_id = room_match[1];
-		app.set_channel(room_id);
-
-		//get user id and list of players in room
-		$.ajax({
-			url: '/room/'+room_id,
-			accepts: 'json',
-			success: function(data) {
-				app.user_id = data.user;
-				app.player_names = data.names;
-				app.players = data.players;
-				//TODO: set user name
-			}
+	var rooms_match = path.match(/\/rooms/);
+	var new_url = "";
+	if(typeof rooms_match !== "undefined" && rooms_match !== null) {
+		$(".room a").click(function(e) {
+			e.preventDefault();
+			var url = e.currentTarget.href;
+			new_url = url;
+			var id_match = url.match(/.*\/room\/(\w*)\/?/);
+			$.ajax({
+				type: 'PUT',
+				url: '/room',
+				dataType: 'json',
+				data: {id: id_match[1]},
+				success: function(data) {
+					get_room();
+				}
+			});
 		});
-
-		//subscribe to the pubsub channel
-		PUBNUB.subscribe({
-		    channel  : app.channel,
-		    callback : function(message) {
-		    	if(__indexOf.call(message.recipients, app.user_id) >= 0) {
-		    		app.match(message);
-		    	}
-		  	}
-		});
-
-		$(document).append('div');//.text('blah');
-		
-		
-		console.log("in /rooms");
-		CAH.Room = Ember.Object.extend({
-			room_name: "default",
-			id: "0",
-			
-			name: function(rm) {
-				this.get('room_name');
-			}
-		});
-		
-		var rm = CAH.Room.create({
-			name: "room A B",
-			id: "1"
-		});
-		console.log(rm);
-		
-		
-		
 	}
+
+	var get_room = function() {
+		path = new_url;
+		var room_match = path.match(/.*\/room\/(\w*)\/?/);
+		if(typeof room_match !== "undefined" && room_match !== null) {
+			//get the room id so we can subscribe to the right pubsub channel
+			var room_id = room_match[1];
+			CAH._app.set_channel(room_id);
 	
+			//get user id and list of players in room
+			var req = $.ajax({
+				type: 'GET',
+				url: '/room/'+room_id,
+				contentType: 'application/json',
+				accepts: 'json',
+				success: function(data) {
+					console.log("it worked!");
+					CAH._app.user_id = data.user;
+					CAH._app.player_names = data.names;
+					CAH._app.players = data.players;
+					//TODO: set user name
+					console.log(data);
+
+					CAH._app.user_name = (function(){
+						for(var i=0; i<CAH._app.players.length; i++) {
+							if(CAH._app.players[i] === CAH._app.user_id) {
+								return CAH._app.player_names[i];
+							}
+						}
+					})();
+				}
+			});
+			//$.get('/room/'+room_id, function(data) {
+			//	console.log("it worked.");
+			//});
+	
+			console.log("after ajax get, before pubnub");
+	
+			//subscribe to the pubsub channel
+			PUBNUB.subscribe({
+			    channel  : CAH._app.channel,
+			    callback : function(message) {
+			    	if(__indexOf.call(message.recipients, app.user_id) >= 0) {
+			    		CAH._app.match(message);
+			    	}
+			  	}
+			});
+	
+			$(document).append('div');//.text('blah');
+			
+			
+			console.log("in /rooms");
+			CAH.Room = Ember.Object.extend({
+				room_name: "default",
+				id: "0",
+				
+				name: function(rm) {
+					this.get('room_name');
+				}
+			});
+			
+			var rm = CAH.Room.create({
+				name: "room A B",
+				id: "1"
+			});
+			console.log(rm);
+			
+			console.log(CAH._app);
+			
+		}
+	};
 });
 
 console.log('here here');

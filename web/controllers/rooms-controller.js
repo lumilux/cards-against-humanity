@@ -21,7 +21,7 @@ module.exports = function(app) {
           room: room
         });
       } else {
-        res.redirect('/room/'+room._id+'/join');
+        res.redirect('/room/'+room._id);
       }
     });
   });
@@ -58,32 +58,34 @@ module.exports = function(app) {
 
             users
               .forEach(function(user) {
-                players.push(user._id);
+                players.push(user.cookie_id);
                 player_names.push(user.name);
             });
 
-            if(req.is('application/json')) {
+            //if(req.is('application/json')) {
               res.json({
                 user: req.session.id
               , names: player_names
               , players: players
               });
-            } else {
+            /*} else {
               res.render('rooms/show', {
                 title: 'Room',
                 room: room,
                 players: players
               });
-            }
+            }*/
           });
     });
   });
 
-  app.put('/room/', function(req, res, next) {
-		var room_id = req.body.id;
+  app.put('/room', function(req, res) {
+    console.log("it's hitting me hard");
+    var room_id = req.body.id;
 		console.log("room_id: " + room_id);
     console.log("session: "+req.session.id);
 		// console.log(express.bodyParser());
+    //res.send("hello", 200);
     User
       .findOne({cookie_id: req.session.id})
       .run(function(err, user) {
@@ -104,14 +106,16 @@ module.exports = function(app) {
               function(err) {
                 User
                   .update({_id: uid},
-                    function(err) {}
+                    function(err, user) {
+                      console.log("updated players");
+                      // console.log("room: "+req.room);
+                      req.session.room = room_id;
+                      //res.redirect('/room/'+room_id);
+                      res.json(null, 200);
+                    }
                   );
               }
             );
-          console.log("updated players");
-          // console.log("room: "+req.room);
-          req.session.room = room_id;
-          res.redirect('/room/'+room_id);
         }
       });
   });
@@ -236,20 +240,35 @@ module.exports = function(app) {
 
   // list available rooms
   app.get('/rooms', function(req, res) {
-    Room
-    .find()
-    .desc('name')
-    .run(function(err, rooms) {
-      if(err) throw err;
-      if(req.is('application/json')) {
-        res.json(rooms);
-      } else {
-        console.log(rooms);
-        res.render('rooms/index', {
-          title: 'List of Rooms',
-          rooms: rooms
-        });
-      }
-    });
+    User
+      .find({cookie_id: req.session.id})
+      .count(function(err, count) {
+        if(count == 0) {
+          res.render('users/new', {
+              title: 'Type your name'
+            , user: new User()
+          });
+        } else {
+          respond_with_rooms();
+        }
+      });
+
+    var respond_with_rooms = function() {
+      Room
+      .find()
+      .desc('name')
+      .run(function(err, rooms) {
+        if(err) throw err;
+        if(req.is('application/json')) {
+          res.json({rooms: rooms});
+        } else {
+          console.log(rooms);
+          res.render('rooms/index', {
+            title: 'List of Rooms',
+            rooms: rooms
+          });
+        }
+      });
+    }
   });
 };

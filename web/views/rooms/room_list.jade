@@ -1,4 +1,4 @@
 div(class="room")
   h3.room_title
-    a(href='/room/'+room._id+'/join')= room.name 
+    a(href='/room/'+room._id)= room.name 
     &nbsp; <strong>#{room.players.length}</strong>
