@@ -5,8 +5,6 @@ var RoomSchema = new Schema({
   , ready_players: [User.ObjectId]
   , black_cards: [Card.ObjectId]
   , white_cards: [Card.ObjectId]
-  , discarded_black_cards: [Card.ObjectId]
-  , discarded_white_cards: [Card.ObjectId]
 });
 
 var Room = mongoose.model('Room', RoomSchema);

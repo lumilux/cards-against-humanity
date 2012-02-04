@@ -1,5 +1,5 @@
-h1= title
 div#rooms
   - if(rooms.length)
     != partial('room_list', {collection: rooms, as: 'room'})
+  
   a(href="/rooms/new") Create a new room

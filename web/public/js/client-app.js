@@ -1,3 +1,4 @@
+
 (function(){
 __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
@@ -8,14 +9,8 @@ var pubnub = PUBNUB.init({
     subscribe_key : "sub-687f0559-4a45-11e1-91da-85f515a90a37"
 });
 
-$("#ping").click(function() {
-	PUBNUB.publish({
-		channel: 'my_browser_channel',
-		message: 'ping. '
-	});
-});
-
-var app = {
+var CAH = Ember.Application.create();
+CAH._app = {
 	channel: null,
 
 	set_channel: function(id) {
@@ -23,6 +18,8 @@ var app = {
 	},
 
 	user_id: null,
+
+	user_name: null,
 
 	emit: function(request, recipients, body) {
 		PUBNUB.publish({
@@ -52,7 +49,7 @@ var app = {
 				//if we are the card czar, enter waiting phase
 				this.do_card_czar_wait();
 			} else {
-				this.do_white_player();
+				this.do_white_player_choose();
 			}
 		}
 		else if (req === "new card") {
@@ -68,7 +65,14 @@ var app = {
 			//TODO:
 			//if everyone has selected a card,
 			//enter waiting phase
-			this.do_card_czar_choose();
+			if(this.players_who_have_played.length === this.players.length) {
+				this.do_card_czar_choose();
+			} else {
+				//show chosen card
+
+				//keep waiting
+				this.do_card_czar_wait();
+			}
 		}
 		else if (req === "round winner") {
 			//record point for winner.
@@ -80,7 +84,7 @@ var app = {
 				this.do_card_czar_wait();
 			} else {
 				//otherwise, enter white choosing phase
-				this.do_white_player();
+				this.do_white_player_choose();
 			}
 		}
 		else if (req === "room end") {
@@ -92,17 +96,31 @@ var app = {
 
 	players: [],
 
+	player_names: [],
+
 	player_scores: [],
 
-	card_czar: null,
+	players_who_have_played: [],
+
+	card_czar: 0,
 
 	next_card_czar: function() {
 		this.card_czar = (this.card_czar++) % players.length;
 		return this.card_czar;
 	},
 
-	do_white_player: function() {
-		
+	do_white_player_wait: function() {
+		CAH.HandView.remove();
+		//TODO: wait until receive msg
+	},
+
+	do_white_player_choose: function() {
+		//TODO: display hand
+		CAH.HandView.append("#container");
+
+		//TODO: emit chosen card
+
+		this.do_white_player_wait();
 	},
 
 	draw_white_card() {
@@ -113,23 +131,49 @@ var app = {
 		this.emit("draw card", [this.SERVER], {color: "black"});
 	},
 
-	do_card_czar: function() {
+	do_card_czar_choose: function() {
 		
+	},
+
+	do_card_czar_wait: function() {
+		//	
+	},
+
+	announce: function() {
+		emit("player joined", recipients: this.players, 
+			body: {id: this.user_id, name: });
 	},
 
 	SERVER: "—server—"
 
 };
 
+
+
+
 $(document).ready(function() {
 	console.log(window.location.pathname);
 	
+	CAH.hand = Ember.Object.create({
+		cards: [{color: "white", content: "Foo 1"},
+			{color: "white", content: "Bar 1"},
+			{color: "white", content: "Baz 1"},
+			{color: "white", content: "Foo 2"},
+			{color: "white", content: "Bar 2"},
+			{color: "white", content: "Baz 2"}]
+	});
+
+	CAH.handView = Ember.View.create({
+		templateName: 'cards-hand',
+		cardsBinding: Ember.Binding.oneWay('CAH.hand.cards');
+	});
+
+
 	
-	var CAH = Ember.Application.create();
 	
 	var path = window.location.pathname;
 	
-	var room_match = path.match(/\/room\/(\w*)\/?/)
+	var room_match = path.match(/\/room\/(\w*)\/?/);
 
 	if(typeof room_match !== "undefined" && room_match !== null) {
 		//get the room id so we can subscribe to the right pubsub channel
@@ -141,8 +185,10 @@ $(document).ready(function() {
 			url: '/room/'+room_id,
 			accepts: 'json',
 			success: function(data) {
-				app.user = data.user;
+				app.user_id = data.user;
+				app.player_names = data.names;
 				app.players = data.players;
+				//TODO: set user name
 			}
 		});
 
@@ -150,7 +196,7 @@ $(document).ready(function() {
 		PUBNUB.subscribe({
 		    channel  : app.channel,
 		    callback : function(message) {
-		    	if(__indexOf.call(message.recipients, app.user) >= 0) {
+		    	if(__indexOf.call(message.recipients, app.user_id) >= 0) {
 		    		app.match(message);
 		    	}
 		  	}

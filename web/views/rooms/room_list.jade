@@ -1,8 +1,4 @@
-- if(lastInCollection)
-  - clas = 'last'
-- else
-  - clas = ''
-div(class="room #{clas}")
+div(class="room")
   h3.room_title
-    a(href='/room/'+room._id+"/join")= room.name 
+    a(href='/room/'+room._id+'/join')= room.name 
     &nbsp; <strong>#{room.players.length}</strong>

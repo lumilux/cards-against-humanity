@@ -4,8 +4,7 @@
  */
 
 var express = require('express')
-  , fs = require('fs')
-  , pubnub = require('pubnub');
+  , fs = require('fs');
 
 var config_file = require('yaml-config');
 var app = exports = module.exports = config = express.createServer();

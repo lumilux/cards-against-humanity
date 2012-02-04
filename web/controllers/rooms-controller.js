@@ -1,6 +1,8 @@
 var Room = mongoose.model('Room');
 var User = mongoose.model('User');
 
+var pubnub = require('pubnub');
+
 var network = pubnub.init({
     publish_key   : "pub-1f2d2adc-d1d2-49bc-8394-c96c55faecc8",
     subscribe_key : "sub-687f0559-4a45-11e1-91da-85f515a90a37",
@@ -52,14 +54,20 @@ module.exports = function(app) {
           .find({cookie_id: {"$in": room.players}},
           function(err, users) {
             var players = [];
+            var player_names = [];
 
             users
               .forEach(function(user) {
-                players.push(user);
+                players.push(user._id);
+                player_names.push(user.name);
             });
 
             if(req.is('application/json')) {
-              res.json({user: req.session.id, players: players});
+              res.json({
+                user: req.session.id
+              , names: player_names
+              , players: players
+              });
             } else {
               res.render('rooms/show', {
                 title: 'Room',
@@ -90,25 +98,20 @@ module.exports = function(app) {
           var uid = user.cookie_id;
           console.log("user.cookie_id: "+user.cookie_id);
           console.log("req.room._id:"+room_id);
-          if(!user.in_room) {
-            Room
-              .update({_id: room_id},
-                {"$addToSet": {players: uid}},
-                function(err) {
-                  User
-                    .update({_id: uid},
-                      {in_room: true},
-                      function(err) {}
-                    );
-                }
-              );
-            console.log("updated players");
-            // console.log("room: "+req.room);
-            req.session.room = room_id;
-            res.redirect('/room/'+room_id);
-          } else {
-            res.redirect('/rooms');
-          }
+          Room
+            .update({_id: room_id},
+              {"$addToSet": {players: uid}},
+              function(err) {
+                User
+                  .update({_id: uid},
+                    function(err) {}
+                  );
+              }
+            );
+          console.log("updated players");
+          // console.log("room: "+req.room);
+          req.session.room = room_id;
+          res.redirect('/room/'+room_id);
         }
       });
   });
@@ -154,6 +157,16 @@ module.exports = function(app) {
       }
       return true;
     };
+    var fisherYates = function(array) {
+      var tmp, current, top = array.length;
+      if(top) while(--top) {
+          current = Math.floor(Math.random() * (top + 1));
+          tmp = array[current];
+          array[current] = array[top];
+          array[top] = tmp;
+      }
+      return array;
+    };
 
     // add player to ready_players.
     Room
@@ -168,22 +181,51 @@ module.exports = function(app) {
 
     //start game
     var start_game = function(players) {
-      //TODO: random shuffle players
-      
+      players = fisherYates(players);
+
       network.subscribe({
         channel: "room:"+room_id,
         connect: function() {
-          emit("room ready", recipients: players, body: {});
+          emit("room ready", players, {});
         },
         callback: function(msg) {
-          if(msg.recipients && msg.recipients[0] === "—server—")
-          var r = msg.request;
-          if(r === "draw card") {
-            if(msg.body.color === "white") {
-              //TODO: choose next white card, emit, discard
-            }
-            else if(msg.body.color === "black") {
-              //TODO: choose next black card, emit, discard
+          if(msg.recipients && msg.recipients[0] === "—server—") {
+            var r = msg.request;
+            if(r === "draw card") {
+              if(msg.body.color === "white") {
+                var chosen_card_text = "";
+                Room
+                  .findById(room_id, function(err, room){
+                    var chosen_card_id = room.white_cards[0];
+                    Card.findById(chosen_card_id, function(err, card) {
+                      //TODO: handle err (ran out of cards)
+                      chosen_card_text = card.text;
+                    });
+                    emit("new card", [player_id], 
+                      {color: "white", content: chosen_card_text});
+                  });
+                Room
+                  .update({_id: room_id},
+                    {"$pop": {white_cards: -1}},
+                    function(err, room) {});
+              }
+              else if(msg.body.color === "black") {
+                var chosen_card_text = "";
+                Room
+                  .findById(room_id, function(err, room){
+                    var chosen_card_id = room.black_cards[0];
+                    Card.findById(chosen_card_id, function(err, card) {
+                      //TODO: handle err (ran out of cards)
+                      chosen_card_text = card.text;
+                    });
+                    emit("new card", [player_id], 
+                      {color: "black", content: chosen_card_text});
+                  });
+                Room
+                  .update({_id: room_id},
+                    {"$pop": {black_cards: -1}},
+                    function(err, room) {});
+              }
             }
           }
         }
@@ -202,6 +244,7 @@ module.exports = function(app) {
       if(req.is('application/json')) {
         res.json(rooms);
       } else {
+        console.log(rooms);
         res.render('rooms/index', {
           title: 'List of Rooms',
           rooms: rooms
