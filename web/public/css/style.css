@@ -7,8 +7,9 @@
 }
 
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  width: 600px;
+  padding: 0px;
+  font: 18px "Helvetica Neue", Helvetica, Arial, sans-serif;
 	display:block;
 	margin-left:auto;
 	margin-right:auto;
@@ -35,7 +36,6 @@ label {
 /*	border:thin solid orange;*/
 	font:20px Helvetica, Arial, sans-serif;
 	text-align:center;
-	display:block;
 	margin-left:auto;
 	margin-right:auto;
 }
@@ -75,14 +75,20 @@ input.newuser#username {
 	text-align:center;
 }
 
+footer {
+  font-size: 0.7em;
+  text-align: center;
+}
 
 
 /* styles for cards */
 
 #card-container {
+    font-size: 16px;
     width: 640px;
     height: 712px;
     margin: 10px auto;
+    padding: 0;
     overflow: hidden;
     clear: both;
 }
