@@ -11,15 +11,18 @@ html(lang="en")
         </div>
       {{/each}}
     script(type="text/x-handlebars", data-template-name="cards-in-play").
-      {{#each cards}}
-        <div class="{{color}} card">
-          <span>{{content}}</span>
-        </div>
-      {{/each}}
+      {{#view CAH.playedCardsView}}
+        <h4>cards in play</h4>
+        {{#each cards}}
+          <div class="{{color}} card">
+            <span>{{content}}</span>
+          </div>
+        {{/each}}
+      {{/view}}
       
   body
     script(type="text/x-handlebars").
-      This is the first Handlebar template we start with.
+      <!--This is the first Handlebar template we start with.-->
 
     #container
       != partial('../includes/header')

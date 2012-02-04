@@ -12,6 +12,10 @@ var network = pubnub.init({
 });
 
 module.exports = function(app) {
+  app.get('/room/example', function(req, res) {
+    res.render('example', {title: ""});
+  });
+
   app.post('/rooms', function(req, res) {
     var room = new Room(req.body.room);
     room.save(function(err) {
@@ -45,6 +49,7 @@ module.exports = function(app) {
   });
 
   app.get('/room/:id', function(req, res) {
+    console.log("get");
     var r_room = req.room;
     Room
       .findOne({_id: r_room._id})
@@ -80,6 +85,7 @@ module.exports = function(app) {
   });
 
   app.put('/room', function(req, res) {
+    console.log("put");
     console.log("it's hitting me hard");
     var room_id = req.body.id;
 		console.log("room_id: " + room_id);
@@ -243,14 +249,14 @@ module.exports = function(app) {
     User
       .find({cookie_id: req.session.id})
       .count(function(err, count) {
-        if(count == 0) {
+        /*if(count == 0) {
           res.render('users/new', {
               title: 'Type your name'
             , user: new User()
           });
-        } else {
+        } else {*/
           respond_with_rooms();
-        }
+        //}
       });
 
     var respond_with_rooms = function() {
@@ -259,10 +265,10 @@ module.exports = function(app) {
       .desc('name')
       .run(function(err, rooms) {
         if(err) throw err;
+        //console.log(req);
         if(req.is('application/json')) {
           res.json({rooms: rooms});
         } else {
-          console.log(rooms);
           res.render('rooms/index', {
             title: 'List of Rooms',
             rooms: rooms

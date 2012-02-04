@@ -164,7 +164,7 @@ $(document).ready(function() {
 
 	CAH.playedCardsView = Ember.View.create({
 		templateName: 'cards-in-play',
-		cardsBinding: Ember.Binding.oneWay('CAH.playedCards.cards')
+		cardsBinding: CAH.playedCards.cards
 	});
 	
 	CAH.hand = Ember.Object.create({
@@ -186,12 +186,13 @@ $(document).ready(function() {
 	
 	
 	var path = window.location.pathname;
-	
+	console.log(path);
 	var rooms_match = path.match(/\/rooms/);
 	var new_url = "";
 	if(typeof rooms_match !== "undefined" && rooms_match !== null) {
 		$(".room a").click(function(e) {
 			e.preventDefault();
+			console.log("link disabled.");
 			var url = e.currentTarget.href;
 			new_url = url;
 			var id_match = url.match(/.*\/room\/(\w*)\/?/);
@@ -201,6 +202,7 @@ $(document).ready(function() {
 				dataType: 'json',
 				data: {id: id_match[1]},
 				success: function(data) {
+					console.log("hello!");
 					get_room();
 				}
 			});
@@ -209,6 +211,7 @@ $(document).ready(function() {
 
 	var get_room = function() {
 		path = new_url;
+		console.log(path);
 		var room_match = path.match(/.*\/room\/(\w*)\/?/);
 		if(typeof room_match !== "undefined" && room_match !== null) {
 			//get the room id so we can subscribe to the right pubsub channel
@@ -227,7 +230,6 @@ $(document).ready(function() {
 					CAH._app.player_names = data.names;
 					CAH._app.players = data.players;
 					//TODO: set user name
-					console.log(data);
 
 					CAH._app.user_name = (function(){
 						for(var i=0; i<CAH._app.players.length; i++) {
@@ -236,6 +238,9 @@ $(document).ready(function() {
 							}
 						}
 					})();
+					console.log(CAH);
+					console.log(CAH._app);
+					CAH.playedCardsView.appendTo("#container");
 				}
 			});
 			//$.get('/room/'+room_id, function(data) {
@@ -256,7 +261,7 @@ $(document).ready(function() {
 	
 			$(document).append('div');//.text('blah');
 			
-			
+			/*
 			console.log("in /rooms");
 			CAH.Room = Ember.Object.extend({
 				room_name: "default",
@@ -272,7 +277,8 @@ $(document).ready(function() {
 				id: "1"
 			});
 			console.log(rm);
-			
+			*/
+			console.log("hello");
 			console.log(CAH._app);
 			
 		}
@@ -280,7 +286,6 @@ $(document).ready(function() {
 });
 
 console.log('here here');
-console.log($('#username'));
 
 // replace single underscores in black cards with a fancy blank line
 $(".card span").replaceText("_", "<span class='_'></span>");
