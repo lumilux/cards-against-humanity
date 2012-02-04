@@ -35,7 +35,7 @@ var app = {
 		var req = msg.request;
 		if(req === "room ready") {
 			//save order of players
-			this.players = msg.body.players;
+			this.players = msg.recipients;
 			//instantiate player scores array
 			for(var i=0; i<this.players.length; i++) {
 				this.player_scores.push(0);
@@ -43,7 +43,7 @@ var app = {
 
 			//draw 10 white cards
 			for(var i=0; i<10; i++) {
-				this.emit("draw card", this.SERVER, 
+				this.emit("draw card", [this.SERVER], 
 					{color: "white", player: this.user});
 			}
 

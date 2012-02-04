@@ -39,7 +39,7 @@ Conversations with Channel (Room)
 Starting a game
     Server:
         SEND room full / all players ready
-			{action:"room ready", body:{players: [Player.ObjectId]}, recipients:[Player.ObjectId]}
+			{action:"room ready", body:{}, recipients:[Player.ObjectId]}
     Anyone:
         RECEIVE room full / all players ready
             -> first card czar draw card, etc.

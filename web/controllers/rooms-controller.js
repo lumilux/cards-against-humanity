@@ -1,6 +1,14 @@
 var Room = mongoose.model('Room');
 var User = mongoose.model('User');
 
+var network = pubnub.init({
+    publish_key   : "pub-1f2d2adc-d1d2-49bc-8394-c96c55faecc8",
+    subscribe_key : "sub-687f0559-4a45-11e1-91da-85f515a90a37",
+    secret_key    : "",
+    ssl           : false,
+    origin        : "pubsub.pubnub.com"
+});
+
 module.exports = function(app) {
   app.post('/rooms', function(req, res) {
     var room = new Room(req.body.room);
@@ -113,13 +121,11 @@ module.exports = function(app) {
     Room
       .update({_id: room_id},
         {"$pull": {players: req.session.id}},
-        function(err) {
-          User
-            .update({_id: req.session.id},
-              {in_room: false},
-              function(err) {}
-            );
-          //TODO: if no one left in room, delete room
+        function(err, room) {
+          //if no one left in room, delete room
+          if(room.players.length == 0) {
+            Room.remove({_id: room_id}, function(err) {});
+          }
         }
       );
     res.redirect('/rooms');
@@ -127,11 +133,63 @@ module.exports = function(app) {
 
   app.put('/room/start', function(req, res) {
 		var room_id = req.body.room_id;
+    var channel_name = "room:"+room_id;
 		var player_id = req.body.player_id;
+    var emit = function(request, recipients, body) {
+      network.publish({
+        channel: channel_name,
+        message: {request: request, recipients: recipients, body: body}
+      });
+    };
+    var setEquals = function(a, b) {
+      if(a.length === b.length) {
+        return true;
+      }
+      for(var i=0; i<a.length; i++) {
+        for(var j=0; j<b.length; j++) {
+          if(a[i] !== b[j]) {
+            return false;
+          }
+        }
+      }
+      return true;
+    };
+
     // add player to ready_players.
-    // if everyone is ready, 
-    //Room
-    //  .find({_id: req.params.id})
+    Room
+      .findById(room_id)
+      .update({"$addToSet": {ready_player: player_id}},
+        function(err, doc) {
+          //if all players are ready, start game
+          if(setEquals(doc.players, doc.ready_players)) {
+            start_game(doc.ready_players);
+          }
+        });
+
+    //start game
+    var start_game = function(players) {
+      //TODO: random shuffle players
+      
+      network.subscribe({
+        channel: "room:"+room_id,
+        connect: function() {
+          emit("room ready", recipients: players, body: {});
+        },
+        callback: function(msg) {
+          if(msg.recipients && msg.recipients[0] === "—server—")
+          var r = msg.request;
+          if(r === "draw card") {
+            if(msg.body.color === "white") {
+              //TODO: choose next white card, emit, discard
+            }
+            else if(msg.body.color === "black") {
+              //TODO: choose next black card, emit, discard
+            }
+          }
+        }
+      });
+    };
+
   });
 
   // list available rooms
