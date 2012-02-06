@@ -3,6 +3,26 @@ html(lang="en")
   include ../includes/head
     script(type="text/x-handlebars", data-template-name="say-hello").
       Hello, <strong>{{CAH.username}}</strong>.
+    
+    script(type="text/x-handlebars", data-template-name="players").
+      {{readyString}} <br />
+      {{#collection contentBinding="CAH.playersController" tagName="ul" itemClassBinding="content.isReady"}}
+        Name: {{content.name}} <br /> 
+        ID: {{content.id}} <br />
+        Ready: {{content.isReady}}
+      {{/collection}}
+    
+    script(type="text/x-handlebars", data-template-name="single-player").
+      <p><em>Name:</em> {{name}}</p>
+    
+    script(type="text/x-handlebars", data-template-name="user").
+      User: {{firstName}} {{lastName}}
+      {{#view App.InfoView}}
+        <b>Posts:</b> {{posts}}
+        <br>
+        <b>Hobbies:</b> {{hobbies}}
+      {{/view}}
+
     script(type="text/x-handlebars", data-template-name="cards-hand").
       <p id="current_black_card">{{black_card}}</p>
       {{#each cards}}
@@ -10,6 +30,7 @@ html(lang="en")
           <span>{{content}}</span>
         </div>
       {{/each}}
+
     script(type="text/x-handlebars", data-template-name="cards-in-play").
       <h4>cards in play</h4>
       {{#each cards}}

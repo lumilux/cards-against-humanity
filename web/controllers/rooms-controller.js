@@ -6,9 +6,8 @@ var pubnub = require('pubnub');
 var network = pubnub.init({
     publish_key   : "pub-1f2d2adc-d1d2-49bc-8394-c96c55faecc8",
     subscribe_key : "sub-687f0559-4a45-11e1-91da-85f515a90a37",
-    secret_key    : "",
     ssl           : false,
-    origin        : "pubsub.pubnub.com"
+    origin        : 'cardsagain.st'
 });
 
 module.exports = function(app) {
@@ -31,7 +30,6 @@ module.exports = function(app) {
   });
 
   app.get('/rooms/new', function(req, res) {
-		console.log('ASDFKLJASKDFJA');
     res.render('rooms/new', {
       title: 'Create New Room',
       room: new Room({})
@@ -85,8 +83,7 @@ module.exports = function(app) {
   });
 
   app.put('/room', function(req, res) {
-    console.log("put");
-    console.log("it's hitting me hard");
+    console.log("PUT received");
     var room_id = req.body.id;
 		console.log("room_id: " + room_id);
     console.log("session: "+req.session.id);
@@ -111,7 +108,7 @@ module.exports = function(app) {
               {"$addToSet": {players: uid}},
               function(err) {
                 User
-                  .update({_id: uid},
+                  .update({_id: uid}, {},
                     function(err, user) {
                       console.log("updated players");
                       // console.log("room: "+req.room);
@@ -145,10 +142,12 @@ module.exports = function(app) {
   });
 
   app.put('/room/start', function(req, res) {
+    console.log("start received");
 		var room_id = req.body.room_id;
     var channel_name = "room:"+room_id;
 		var player_id = req.body.player_id;
     var emit = function(request, recipients, body) {
+      console.log("emit: "+request+" "+recipients);
       network.publish({
         channel: channel_name,
         message: {request: request, recipients: recipients, body: body}
@@ -178,30 +177,47 @@ module.exports = function(app) {
       return array;
     };
 
-    // add player to ready_players.
-    Room
-      .findById(room_id)
-      .update({"$addToSet": {ready_player: player_id}},
-        function(err, doc) {
-          //if all players are ready, start game
-          if(setEquals(doc.players, doc.ready_players)) {
-            start_game(doc.ready_players);
-          }
-        });
-
     //start game
     var start_game = function(players) {
+      console.log("in start_game");
       players = fisherYates(players);
+      console.log("random shuffled the players. "+players);
 
+      //TODO: something is wrong with this subscribe call.
+      //Unexpected token ILLEGAL in the room name?!
       network.subscribe({
         channel: "room:"+room_id,
         connect: function() {
-          emit("room ready", players, {});
+          console.log("subscribed to room:"+room_id);
+          setTimeout(function() {
+            emit("room ready", [players], {});
+          }, 1000);
         },
         callback: function(msg) {
+          console.log("received: "+msg.request+" "+msg.recipients);
           if(msg.recipients && msg.recipients[0] === "—server—") {
             var r = msg.request;
-            if(r === "draw card") {
+            if(r === "timeout ping") {
+              console.log("timeout ping received");
+              if(msg.body.t_id !== null && msg.body.t_id !== "undefined") {
+                console.log("timeout cancelled: "+msg.body.id);
+                clearTimeout(msg.body.t_id);
+              }
+              setTimeout(function () {
+                console.log("timeout set");
+                var t_id = setTimeout(function() {
+                  Room
+                    .findById(room_id)
+                    .update({"$pull": {players: msg.body.id}},
+                      function(err, room) {
+                        console.log("timed out: "+msg.body.id);
+                      }
+                  );
+                }, 60000);
+                emit("timeout ping", [msg.body.id], {t_id: t_id});
+              }, 60000);
+            }
+            else if(r === "draw card") {
               if(msg.body.color === "white") {
                 var chosen_card_text = "";
                 Room
@@ -242,6 +258,44 @@ module.exports = function(app) {
       });
     };
 
+    // add player to ready_players.
+    console.log("add player to ready_players");
+    Room
+      .findById(room_id, function(err, room) {
+        if(!room)
+          return next(new Error("could not load room"));
+        
+        console.log("addToSet happened "+room_id);
+        console.log("player_id: "+player_id);
+        if(err) {
+          console.log("error: addToSet "+room_id);
+          console.log(room);
+        } else {
+          //if all players are ready, start game
+          console.log("error: "+err);
+          console.log("room: "+room);
+          console.log("room.players: "+room.players);
+          console.log("room.ready_players: "+room.ready_players);
+          room.ready_players.push(player_id);
+
+          room.save(function(err) {
+            if(err)
+              console.log("could not save room");
+            else {
+              console.log("saved room!");
+              if(setEquals(room.players, room.ready_players)) {
+                start_game(room.ready_players);
+              } else {
+                console.log("everyone is not ready.");
+                console.log("players: "+room.players);
+                console.log("ready_players: "+room.ready_players);
+              }
+            }
+          });
+        }
+      });
+
+    res.json(null, 200);
   });
 
   // list available rooms
