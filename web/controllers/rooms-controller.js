@@ -48,6 +48,46 @@ var fisherYates = function(array) {
   return array;
 };
 
+var emitNewCards = function(num, color, room_id, user_id, end_room) {
+  Room
+  .findById(room_id, function(err, room){
+    var chosen_cards = ((color === "white") 
+      ? room.white_cards.slice(-num) : room.black_cards.slice(-num));
+    
+    if(chosen_cards.length === 0) {
+      end_room();
+    }
+
+    if(color === "white") {
+      Room
+      .update({_id: room_id},
+        {"$pullAll": {white_cards: chosen_cards}},
+        function(err, room) {});
+    }
+    else if(color === "black") {
+      Room
+      .update({_id: room_id},
+        {"$pullAll": {black_cards: chosen_cards}},
+        function(err, room) {});
+    }
+
+    Card.find({_id: {"$in": chosen_cards}}, function(err, cards) {
+      if(err || !cards) {
+        console.log("couldn't get cards");
+        return next(new Error('Failed to load cards'));
+      }
+      else {
+        console.log("cards: "+cards.length);
+        cards.forEach(function(card) {
+          console.log("sent card: "+card.text);
+          emit("new card", [user_id], 
+            {color: color, content: card.text});
+        });
+      }
+    });
+  });
+};
+
 //start game
 var start_game = function(room_id, players, next) {
   console.log("in start_game");
@@ -67,7 +107,7 @@ var start_game = function(room_id, players, next) {
     },
 
     callback: function(msg) {
-      console.log("received: "+msg.request+" "+msg.recipients);
+      //console.log("received: "+msg.request+" "+msg.recipients);
 
       //we only care if the message was addressed to us.
       if(msg.recipients && msg.recipients[0] === "—server—") {
@@ -78,65 +118,35 @@ var start_game = function(room_id, players, next) {
 
           if(msg.body.t_id !== null && msg.body.t_id !== "undefined") {
             console.log("timeout cancelled: "+msg.body.id);
-            clearTimeout(msg.body.t_id);
+            clearTimeout(parseInt(msg.body.t_id, 10));
           }
 
-          setTimeout(function () {
-            console.log("timeout set");
-            var t_id = setTimeout(function() {
-              Room
-                .findById(room_id)
-                .update({"$pull": {players: msg.body.id}},
-                  function(err, room) {
-                    console.log("timed out and removed: "+msg.body.id);
-                  }
-              );
-            }, 60000);
-            emit("timeout ping", [msg.body.id], {t_id: t_id});
-          }, 60000);
+          Room
+            .findById(room_id, function(err, room) {
+              if(__indexOf.call(room.players, msg.body.id) >= 0) {
+                setTimeout(function () {
+                  console.log("timeout set");
+                  var t_id = setTimeout(function() {
+                    Room
+                      .findById(room_id)
+                      .update({"$pull": {players: msg.body.id}},
+                        function(err, room) {
+                          console.log("timed out and removed: "+msg.body.id);
+                        }
+                    );
+                  }, 30000);
+                  t_id = t_id.toString();
+                  emit("timeout ping", [msg.body.id], {t_id: t_id});
+                }, 30000);
+              }
+            });
         }
         else if(r === "draw card") {
-          if(msg.body.color === "white") {
-            var chosen_card_text = "";
-            Room
-              .findById(room_id, function(err, room){
-                var chosen_card_id = room.white_cards[0];
-                Card.findById(chosen_card_id, function(err, card) {
-                  if(err || !card) {
-                    console.log("couldn't get card "+chosen_card_id);
-                    return next(new Error('Failed to load card'));
-                  }
-                  else {
-                    chosen_card_text = card.text;
-                  }
-                });
-                console.log("sent card: "+chosen_card_text);
-                emit("new card", [msg.body.id], 
-                  {color: "white", content: chosen_card_text});
-              });
-            Room
-              .update({_id: room_id},
-                {"$pop": {white_cards: -1}},
-                function(err, room) {});
-          }
-          else if(msg.body.color === "black") {
-            var chosen_card_text = "";
-            Room
-              .findById(room_id, function(err, room){
-                var chosen_card_id = room.black_cards[0];
-                Card.findById(chosen_card_id, function(err, card) {
-                  //TODO: handle err (ran out of cards)
-                  chosen_card_text = card.text;
-                });
-                console.log("sent card: "+chosen_card_text);
-                emit("new card", [player_id], 
-                  {color: "black", content: chosen_card_text});
-              });
-            Room
-              .update({_id: room_id},
-                {"$pop": {black_cards: -1}},
-                function(err, room) {});
-          }
+          console.log("msg.body.num: "+msg.body.num);
+          emitNewCards(msg.body.num, msg.body.color, room_id, msg.body.id,
+            function() {
+              emit("room end", players, {});
+            });
         }
       }
     }
@@ -148,7 +158,7 @@ module.exports = function(app) {
     res.render('example', {title: ""});
   });
 
-  app.post('/rooms', function(req, res) {
+  app.post('/rooms', function(req, res, next) {
     var room = new Room(req.body.room);
     room.save(function(err) {
       if(err) {
@@ -158,7 +168,47 @@ module.exports = function(app) {
         });
       } else {
         //TODO: save random shuffling of black and white cards to room
-        res.redirect('/room/'+room._id);
+        Card.find().run(function(err, cards) {
+          var white_cards = [];
+          var black_cards = [];
+          cards.forEach(function(card) {
+            if(card.color === "white") {
+              white_cards.push(card._id);
+            } else if(card.color === "black") {
+              black_cards.push(card._id);
+            }
+          });
+
+          white_cards = fisherYates(white_cards);
+          black_cards = fisherYates(black_cards);
+
+          Room
+            .findById(room._id, function(err, room) {
+              if(err || !room) {
+                console.log("could not get room to add cards");
+                return next(new Error("could not load room"));
+              }
+              else {
+                black_cards.forEach(function(card) {
+                  room.black_cards.push(card);
+                });
+                white_cards.forEach(function(card) {
+                  room.white_cards.push(card);
+                });
+
+                room.save(function(err) {
+                  if(err) {
+                    console.log("could not get room to add cards");
+                    return next(new Error("could not load room"));
+                  }
+                  else {
+                    console.log("saved "+black_cards.length+" black cards and "+white_cards.length+" white cards to room.");
+                    res.redirect('/room/'+room._id);
+                  }
+                });
+              }
+            });
+          });
       }
     });
   });

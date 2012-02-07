@@ -48,6 +48,26 @@ CAH.PlayersView = Ember.View.extend({
 
 CAH.playersView = CAH.PlayersView.create({});
 
+CAH.handController = Ember.ArrayProxy.create({
+	content: [],
+
+	createCard: function(text) {
+		var card = Ember.Object.create({
+			text: text
+		});
+		this.pushObject(card);
+	},
+	//TODO: remove card by id
+	//removeCard: function() {},
+});
+
+CAH.HandView = Ember.View.extend({
+	templateName: 'cards-hand',
+	contentBinding: 'CAH.handController.content'
+});
+
+CAH.handView = CAH.HandView.create({});
+
 CAH._app = {
 	channel: null,
 
@@ -76,11 +96,14 @@ CAH._app = {
 				{id: this.user_id, t_id: msg.body.t_id});
 		}
 		else if(req === "player joined") {
-			console.log(msg.body.name+" joined the room.");
-			CAH.playersController.createPlayer(msg.body.name, msg.body.id, false);
-			this.players.push(msg.body.id);
-			this.player_names.push(msg.body.name);
-			console.log("all players: "+this.player_names);
+			//if player doesn't already exist (i.e. ourselves)
+			if(__indexOf.call(this.players, msg.body.id) == -1) {
+				console.log(msg.body.name+" joined the room.");
+				CAH.playersController.createPlayer(msg.body.name, msg.body.id, false);
+				this.players.push(msg.body.id);
+				this.player_names.push(msg.body.name);
+				console.log("all players: "+this.player_names);
+			}
 		}
 		else if(req === "room ready") {
 			//save order of players
@@ -91,10 +114,7 @@ CAH._app = {
 			}
 
 			//draw 10 white cards
-			for(var i=0; i<10; i++) {
-				this.emit("draw card", [this.SERVER], 
-					{color: "white", id: this.user_id});
-			}
+			this.draw_white_hand();
 
 			//start the game
 			if (this.players[0] === this.user_id) {
@@ -108,6 +128,7 @@ CAH._app = {
 			console.log("received "+msg.body.color+" card: "+msg.body.content);
 			if(msg.body.color === "white") {
 				this.hand.push(msg.body.content);
+				CAH.handController.createCard(msg.body.content);
 			}
 			else if(msg.body.color === "black") {
 				//TODO: display as black card
@@ -171,19 +192,23 @@ CAH._app = {
 	do_white_player_choose: function() {
 		console.log("\nwhite player choose");
 		//TODO: display hand
-		CAH.HandView.append("#container");
+		CAH.handView.appendTo("#container");
 
 		//TODO: emit chosen card
 
 		this.do_white_player_wait();
 	},
 
+	draw_white_hand: function() {
+		this.emit("draw card", [this.SERVER], {color: "white", num: 6, id: this.user_id});
+	},
+
 	draw_white_card: function() {
-		this.emit("draw card", [this.SERVER], {color: "white", id: this.user_id});
+		this.emit("draw card", [this.SERVER], {color: "white", num: 1, id: this.user_id});
 	},
 
 	draw_black_card: function() {
-		this.emit("draw card", [this.SERVER], {color: "black"});
+		this.emit("draw card", [this.SERVER], {color: "black", num: 1, id: this.user_id});
 	},
 
 	do_card_czar_choose: function() {
@@ -194,6 +219,9 @@ CAH._app = {
 	do_card_czar_wait: function() {
 		console.log("\ncard czar wait");
 		//TODO
+
+		//REMOVE
+		CAH.handView.appendTo("#container");
 	},
 
 	announce: function() {
@@ -305,7 +333,7 @@ $(document).ready(function() {
 			  	console.log("subscribed to "+CAH._app.channel);
 			  },
 			  callback : function(message) {
-			  	console.log("received: "+message.request+" "+message.recipients);
+			  	//console.log("received: "+message.request+" "+message.recipients);
 			  	if(__indexOf.call(message.recipients, CAH._app.user_id) >= 0) {
 			  		CAH._app.match(message);
 			  	}

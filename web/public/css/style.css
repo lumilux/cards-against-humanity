@@ -80,6 +80,8 @@ input.newuser#username {
 }
 
 footer {
+  position: absolute;
+  bottom: 0;
   font-size: 0.7em;
   text-align: center;
 }

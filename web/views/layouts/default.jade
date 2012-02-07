@@ -8,28 +8,18 @@ html(lang="en")
       {{readyString}} <br />
       {{#collection contentBinding="CAH.playersController" tagName="ul" itemClassBinding="content.isReady"}}
         Name: {{content.name}} <br /> 
-        ID: {{content.id}} <br />
         Ready: {{content.isReady}}
       {{/collection}}
     
     script(type="text/x-handlebars", data-template-name="single-player").
       <p><em>Name:</em> {{name}}</p>
-    
-    script(type="text/x-handlebars", data-template-name="user").
-      User: {{firstName}} {{lastName}}
-      {{#view App.InfoView}}
-        <b>Posts:</b> {{posts}}
-        <br>
-        <b>Hobbies:</b> {{hobbies}}
-      {{/view}}
 
     script(type="text/x-handlebars", data-template-name="cards-hand").
-      <p id="current_black_card">{{black_card}}</p>
-      {{#each cards}}
-        <div class="{{color}} card">
-          <span>{{content}}</span>
+      {{#collection contentBinding="CAH.handController" id="card-container"}}
+        <div class="white card">
+          <span>{{content.text}}</span>
         </div>
-      {{/each}}
+      {{/collection}}
 
     script(type="text/x-handlebars", data-template-name="cards-in-play").
       <h4>cards in play</h4>
