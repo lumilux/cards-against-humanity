@@ -2,8 +2,6 @@
 (function(){
 __indexOf = Array.prototype.indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-var output = PUBNUB.$('output');
-
 var pubnub = PUBNUB.init({
     publish_key   : "pub-1f2d2adc-d1d2-49bc-8394-c96c55faecc8",
     subscribe_key : "sub-687f0559-4a45-11e1-91da-85f515a90a37",
@@ -62,7 +60,7 @@ CAH._app = {
 	user_name: null,
 
 	emit: function(request, recipients, body) {
-		console.log("emit "+request);
+		console.log("emit "+request+" to ["+recipients+"]");
 		pubnub.publish({
 			channel: this.channel,
 			message: {request: request, recipients: recipients, body: body}
@@ -95,11 +93,11 @@ CAH._app = {
 			//draw 10 white cards
 			for(var i=0; i<10; i++) {
 				this.emit("draw card", [this.SERVER], 
-					{color: "white", player: this.user});
+					{color: "white", id: this.user_id});
 			}
 
 			//start the game
-			if (this.players[0] === this.user) {
+			if (this.players[0] === this.user_id) {
 				//if we are the card czar, enter waiting phase
 				this.do_card_czar_wait();
 			} else {
@@ -107,6 +105,7 @@ CAH._app = {
 			}
 		}
 		else if (req === "new card") {
+			console.log("received "+msg.body.color+" card: "+msg.body.content);
 			if(msg.body.color === "white") {
 				this.hand.push(msg.body.content);
 			}
@@ -133,7 +132,7 @@ CAH._app = {
 			player_scores[msg.body.played_by]++;
 
 			//advance to next card czar.
-			if(players[this.next_card_czar()] == this.user) {
+			if(players[this.next_card_czar()] == this.user_id) {
 				//if we're next, enter waiting phase
 				this.do_card_czar_wait();
 			} else {
@@ -164,11 +163,13 @@ CAH._app = {
 	},
 
 	do_white_player_wait: function() {
+		console.log("\nwhite player wait");
 		CAH.HandView.remove();
 		//TODO: wait until receive msg
 	},
 
 	do_white_player_choose: function() {
+		console.log("\nwhite player choose");
 		//TODO: display hand
 		CAH.HandView.append("#container");
 
@@ -178,7 +179,7 @@ CAH._app = {
 	},
 
 	draw_white_card: function() {
-		this.emit("draw card", [this.SERVER], {color: "white"});
+		this.emit("draw card", [this.SERVER], {color: "white", id: this.user_id});
 	},
 
 	draw_black_card: function() {
@@ -186,11 +187,13 @@ CAH._app = {
 	},
 
 	do_card_czar_choose: function() {
-		
+		console.log("\ncard czar choose");
+		//TODO
 	},
 
 	do_card_czar_wait: function() {
-		//	
+		console.log("\ncard czar wait");
+		//TODO
 	},
 
 	announce: function() {
@@ -296,9 +299,11 @@ $(document).ready(function() {
 			//get the room id so we can subscribe to the right pubsub channel
 			var room_id = room_match[1];
 			CAH._app.set_channel(room_id);
-			console.log("subscribed to: "+CAH._app.channel);
 			pubnub.subscribe({
 			  channel  : CAH._app.channel,
+			  connect  : function() {
+			  	console.log("subscribed to "+CAH._app.channel);
+			  },
 			  callback : function(message) {
 			  	console.log("received: "+message.request+" "+message.recipients);
 			  	if(__indexOf.call(message.recipients, CAH._app.user_id) >= 0) {
@@ -357,12 +362,6 @@ $(document).ready(function() {
 					CAH._app.emit("timeout ping", 
 						[CAH._app.SERVER], 
 						{id: CAH._app.user_id});
-					
-					setInterval(function() {
-						CAH._app.emit("test", 
-							[CAH._app.SERVER], 
-							{id: CAH._app.user_id});
-					}, 2000);
 				},
 				error: function(error, data) {
 					console.log("start error");
