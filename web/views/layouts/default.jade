@@ -2,32 +2,33 @@
 html(lang="en")
   include ../includes/head
     script(type="text/x-handlebars", data-template-name="say-hello").
-      Hello, <strong>{{CAH.username}}</strong>.
+      Hello, <strong>{{{CAH.username}}}</strong>.
     
     script(type="text/x-handlebars", data-template-name="players").
       {{readyString}} <br />
       {{#collection contentBinding="CAH.playersController" tagName="ul" itemClassBinding="content.isReady"}}
-        Name: {{content.name}} <br /> 
+        Name: {{{content.name}}} <br /> 
         Ready: {{content.isReady}}
       {{/collection}}
     
     script(type="text/x-handlebars", data-template-name="single-player").
-      <p><em>Name:</em> {{name}}</p>
+      <p><em>Name:</em> {{{name}}}</p>
 
     script(type="text/x-handlebars", data-template-name="cards-hand").
-      {{#collection contentBinding="CAH.handController" id="card-container"}}
-        <div class="white card">
-          <span>{{content.text}}</span>
+      <p id="black-card-small" class="card-text black">{{{black_card}}}</p>
+      <h4>Your Hand</h4>
+      {{#collection contentBinding="CAH.handController" id="cards-hand" class="card-container"}}
+        <div class="white card" {{bindAttr id="content.id"}}>
+          <span class="card-text">{{{content.text}}}</span>
         </div>
       {{/collection}}
 
     script(type="text/x-handlebars", data-template-name="cards-in-play").
-      <h4>cards in play</h4>
-      {{#each cards}}
-        <div class="{{color}} card">
-          <span>{{content}}</span>
+      {{#collection contentBinding="CAH.tableController" id="cards-table" class="card-container"}}
+        <div {{bindAttr class="content.color content.card"}}>
+          <span class="card-text">{{{content.text}}}</span>
         </div>
-      {{/each}}
+      {{/collection}}
       
   body
     script(type="text/x-handlebars").

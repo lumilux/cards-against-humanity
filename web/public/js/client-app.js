@@ -24,6 +24,7 @@ CAH.playersController = Ember.ArrayProxy.create({
 	},
 
 	setReady: function(id) {
+		//TODO: fix this to update properly (this.replaceContent?)
 		this.content = this.content.map(function(item) {
 			if(item.id === id) {
 				item.set('isReady', true);
@@ -48,22 +49,70 @@ CAH.PlayersView = Ember.View.extend({
 
 CAH.playersView = CAH.PlayersView.create({});
 
+CAH.tableController = Ember.ArrayProxy.create({
+	black_card: function() {
+		//TODO: change this to finding the black card
+		return this.objectAtContent(0);
+	}.property(),
+
+	content: [],
+
+	addCard: function(color, text, id) {
+		//if placeholders are present, remove them.
+		if(this.content.length !== 0 && this.objectAtContent(0).text === "") {
+			this.replaceContent(0, this.content.length, []);
+		}
+		var card = Ember.Object.create({
+			color: color,
+			text: text,
+			id: id,
+			card: "card"
+		});
+		this.pushObject(card);
+		if(color === "black") {
+			$(".card span").replaceText(/_/g, "<span class='_'></span>");
+		}
+	},
+
+	removeAllCards: function() {
+		//remove all cards and add placeholders.
+		this.replaceContent(0, this.content.length, []);
+		this.addCard("black", "", "");
+		var num_white = CAH._app.players.length - 1;
+		for(var i=0; i<num_white; i++) {
+			this.addCard("white", "", "");
+		}
+	}
+});
+
 CAH.handController = Ember.ArrayProxy.create({
 	content: [],
 
-	createCard: function(text) {
+	createCard: function(text, id) {
 		var card = Ember.Object.create({
-			text: text
+			text: text,
+			id: id
 		});
 		this.pushObject(card);
 	},
-	//TODO: remove card by id
-	//removeCard: function() {},
+
+	removeCard: function(id) {
+		
+	},
 });
+
+CAH.TableView = Ember.View.extend({
+	templateName: 'cards-in-play',
+	contentBinding: 'CAH.tableController.content',
+	black_cardBinding: 'CAH.tableController.black_card'
+});
+
+CAH.tableView = CAH.TableView.create({});
 
 CAH.HandView = Ember.View.extend({
 	templateName: 'cards-hand',
-	contentBinding: 'CAH.handController.content'
+	contentBinding: 'CAH.handController.content',
+	black_cardBinding: 'CAH.tableController.black_card'
 });
 
 CAH.handView = CAH.HandView.create({});
@@ -128,29 +177,41 @@ CAH._app = {
 			console.log("received "+msg.body.color+" card: "+msg.body.content);
 			if(msg.body.color === "white") {
 				this.hand.push(msg.body.content);
-				CAH.handController.createCard(msg.body.content);
+				CAH.handController.createCard(msg.body.content, msg.body.id);
 			}
 			else if(msg.body.color === "black") {
 				//TODO: display as black card
+				CAH.tableController.addCard(msg.body.color, msg.body.content, msg.body.id);
 			}
 		}
 		else if (req === "selected card") {
-			//if this is received, we are the card czar
+			//show chosen card
+			CAH.tableController.addCard(msg.body.color, msg.body.content, msg.body.id);
+			this.set_played(msg.body.player);
 			//TODO:
 			//if everyone has selected a card,
 			//enter waiting phase
-			if(this.players_who_have_played.length === this.players.length) {
-				this.do_card_czar_choose();
+			if(this.players[this.card_czar] === this.user_id) {
+				if(this.players_who_have_played.length === this.players.length) {
+					this.reset_played();
+					this.do_card_czar_choose();
+				} else {
+					//keep waiting
+					this.do_card_czar_wait();
+				}
 			} else {
-				//show chosen card
-
-				//keep waiting
-				this.do_card_czar_wait();
+				if(this.players_who_have_played.length === this.players.length) {
+					this.reset_played();
+				}
+				this.do_white_player_wait();
 			}
 		}
 		else if (req === "round winner") {
 			//record point for winner.
 			player_scores[msg.body.played_by]++;
+
+			//remove played cards.
+			CAH.tableController.removeAllCards();
 
 			//advance to next card czar.
 			if(players[this.next_card_czar()] == this.user_id) {
@@ -168,6 +229,8 @@ CAH._app = {
 
 	hand: [],
 
+	black_card: null,
+
 	players: [],
 
 	player_names: [],
@@ -183,9 +246,19 @@ CAH._app = {
 		return this.card_czar;
 	},
 
+	set_played: function(id) {
+		if(!(id in this.players_who_have_played)) {
+			this.players_who_have_played.push(id);
+		}
+	},
+
+	reset_played: function() {
+		this.players_who_have_played = [];
+	},
+
 	do_white_player_wait: function() {
 		console.log("\nwhite player wait");
-		CAH.HandView.remove();
+		CAH.handView.remove();
 		//TODO: wait until receive msg
 	},
 
@@ -200,27 +273,35 @@ CAH._app = {
 	},
 
 	draw_white_hand: function() {
-		this.emit("draw card", [this.SERVER], {color: "white", num: 6, id: this.user_id});
+		if(CAH.handController.get("content").length === 0) {
+			this.emit("draw card", [this.SERVER], {color: "white", num: 6, id: this.user_id});	
+		}
 	},
 
 	draw_white_card: function() {
-		this.emit("draw card", [this.SERVER], {color: "white", num: 1, id: this.user_id});
+		if(CAH.handController.get("content").length !== 6) {
+			this.emit("draw card", [this.SERVER], {color: "white", num: 1, id: this.user_id});
+		}
 	},
 
 	draw_black_card: function() {
-		this.emit("draw card", [this.SERVER], {color: "black", num: 1, id: this.user_id});
+		this.emit("draw card", [this.SERVER], {color: "black", num: 1, czar_id: this.user_id});
 	},
 
 	do_card_czar_choose: function() {
 		console.log("\ncard czar choose");
 		//TODO
+
+		//this.draw_black_card();
 	},
 
 	do_card_czar_wait: function() {
 		console.log("\ncard czar wait");
 		//TODO
 
-		//REMOVE
+		//TODO: REMOVE
+		this.draw_black_card();
+		CAH.tableView.appendTo("#container");
 		CAH.handView.appendTo("#container");
 	},
 
@@ -294,7 +375,7 @@ $(document).ready(function() {
 	
 	var path = window.location.pathname;
 	//console.log(path);
-	var rooms_match = path.match(/\/rooms/);
+	var rooms_match = path.match(/\/rooms\/?/);
 	var new_url = "";
 	var room_id = "";
 	if(typeof rooms_match !== "undefined" && rooms_match !== null) {
@@ -400,8 +481,5 @@ $(document).ready(function() {
 });
 
 console.log('here here');
-
-// replace single underscores in black cards with a fancy blank line
-$(".card span").replaceText("_", "<span class='_'></span>");
 
 })();

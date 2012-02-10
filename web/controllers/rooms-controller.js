@@ -48,28 +48,19 @@ var fisherYates = function(array) {
   return array;
 };
 
-var emitNewCards = function(num, color, room_id, user_id, end_room) {
+var emitNewWhiteCards = function(num, room_id, user_id, end_room) {
   Room
-  .findById(room_id, function(err, room){
-    var chosen_cards = ((color === "white") 
-      ? room.white_cards.slice(-num) : room.black_cards.slice(-num));
+  .findById(room_id, function(err, room) {
+    var chosen_cards = room.white_cards.slice(-num);
     
     if(chosen_cards.length === 0) {
       end_room();
     }
 
-    if(color === "white") {
-      Room
-      .update({_id: room_id},
-        {"$pullAll": {white_cards: chosen_cards}},
-        function(err, room) {});
-    }
-    else if(color === "black") {
-      Room
-      .update({_id: room_id},
-        {"$pullAll": {black_cards: chosen_cards}},
-        function(err, room) {});
-    }
+    Room
+    .update({_id: room_id},
+      {"$pullAll": {white_cards: chosen_cards}},
+      function(err, room) {});
 
     Card.find({_id: {"$in": chosen_cards}}, function(err, cards) {
       if(err || !cards) {
@@ -81,12 +72,46 @@ var emitNewCards = function(num, color, room_id, user_id, end_room) {
         cards.forEach(function(card) {
           console.log("sent card: "+card.text);
           emit("new card", [user_id], 
-            {color: color, content: card.text});
+            {color: "white", content: card.text, id: card._id});
         });
       }
     });
   });
 };
+
+var emitNewBlackCard = function(room_id, players, czar_id, end_room) {
+  Room
+  .findById(room_id, function(err, room) {
+    var chosen_card = room.black_cards.slice(-1);
+
+    if(chosen_card.length === 0) {
+      end_room();
+    }
+
+    Room
+    .update({_id: room_id},
+      {"$pullAll": {black_cards: chosen_card}},
+      function(err, room) {});
+    
+    Card.findOne({_id: chosen_card[0]}, function(err, card) {
+      if(err || !card) {
+        console.log("couldn't get card");
+        return next(new Error('Failed to load card'));
+      }
+      else {
+        console.log("sent card: "+card.text);
+        emit("new card", players, {
+          color: "black", 
+          content: card.text, 
+          id: card._id, 
+          czar_id: czar_id
+        });
+      }
+    });
+  });
+};
+
+//TODO: emit new black card to all players
 
 //start game
 var start_game = function(room_id, players, next) {
@@ -143,10 +168,15 @@ var start_game = function(room_id, players, next) {
         }
         else if(r === "draw card") {
           console.log("msg.body.num: "+msg.body.num);
-          emitNewCards(msg.body.num, msg.body.color, room_id, msg.body.id,
-            function() {
-              emit("room end", players, {});
-            });
+          var room_end = function() {
+            emit("room end", players, {});
+          }
+          if(msg.body.color === "white") {
+            emitNewWhiteCards(msg.body.num, room_id, msg.body.id, room_end);
+          }
+          else if(msg.body.color === "black") {
+            emitNewBlackCard(room_id, players, msg.body.czar_id, room_end);
+          }
         }
       }
     }
